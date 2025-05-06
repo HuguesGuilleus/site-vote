@@ -13,7 +13,7 @@ const header = `Code département;Libellé département;Code commune;Libellé co
 
 const url = "https://static.data.gouv.fr/resources/elections-legislatives-des-30-juin-et-7-juillet-2024-resultats-definitifs-du-1er-tour/20240710-171445/resultats-definitifs-par-bureau-de-vote.csv"
 
-func Parse(t *tool.Tool) {
+func Parse(t *tool.Tool) []*BureauVote {
 	body := t.Fetch(fetch.URL(url)).Body
 	defer body.Close()
 
@@ -22,10 +22,10 @@ func Parse(t *tool.Tool) {
 	lines, err := r.ReadAll()
 	if err != nil {
 		t.Error("csv.parse", "err", err.Error())
-		return
+		return nil
 	} else if strings.Join(lines[0], ";") != header {
 		t.Error("wrong header")
-		return
+		return nil
 	}
 
 	bureaux := make([]*BureauVote, 0, len(lines[1:]))
@@ -33,10 +33,12 @@ func Parse(t *tool.Tool) {
 		bv, err := parseBureauVote(line)
 		if err != nil {
 			t.Warn("parse line", "err", err.Error(), "line", i+2)
+			continue
 		}
 		bureaux = append(bureaux, bv)
 	}
 
+	return bureaux
 }
 
 type BureauVote struct {
@@ -54,12 +56,13 @@ type BureauVote struct {
 }
 
 type Vote struct {
-	Panneau  int
+	Panneau  uint
 	Nuance   string
+	Opinion  Opinion
 	Nom      string
 	Prénom   string
 	EstFemme bool
-	Voix     int
+	Voix     uint
 }
 
 func parseBureauVote(line []string) (*BureauVote, error) {
@@ -140,6 +143,25 @@ func parseVotes(line []string, votes []Vote) ([]Vote, error) {
 		return nil, fmt.Errorf("Get panneau num: %w", err)
 	}
 
+	// Source: https://www.vie-publique.fr/en-bref/285049-legislatives-2022-une-circulaire-dattribution-des-nuances-politiques
+	// (Et de l'empirisme)
+	opinion := OpinionOther
+	switch line[1] {
+	case "REG", "DIV":
+	case "DXG", "EXG":
+		opinion = OpinionFarLeft
+	case "COM", "FI", "ECO", "UG", "VEC":
+		opinion = OpinionLeft
+	case "SOC", "RDG", "ENS", "DVC", "DVG":
+		opinion = OpinionCenter
+	case "LR", "UDI", "DVD", "DSV", "HOR":
+		opinion = OpinionRight
+	case "REC", "RN", "DXD", "EXD", "UXD":
+		opinion = OpinionFarRight
+	default:
+		return nil, fmt.Errorf("Unknown opinion %q", line[1])
+	}
+
 	estFemme := false
 	switch line[4] {
 	case "MASCULIN":
@@ -155,12 +177,13 @@ func parseVotes(line []string, votes []Vote) ([]Vote, error) {
 	}
 
 	votes = append(votes, Vote{
-		Panneau:  int(panneau),
+		Panneau:  uint(panneau),
 		Nuance:   line[1],
+		Opinion:  opinion,
 		Nom:      line[2],
 		Prénom:   line[3],
 		EstFemme: estFemme,
-		Voix:     int(voix),
+		Voix:     uint(voix),
 	})
 
 	return parseVotes(line[9:], votes)
