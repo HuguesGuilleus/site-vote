@@ -82,11 +82,11 @@ table {
 
 }
 
-[data-opinion=EG] {
+[data-opinion=XL] {
 	background: brown;
 }
 
-[data-opinion=G] {
+[data-opinion=L] {
 	background: tomato;
 }
 
@@ -94,15 +94,15 @@ table {
 	background: aqua;
 }
 
-[data-opinion=D] {
+[data-opinion=R] {
 	background: blue
 }
 
-[data-opinion=ED] {
+[data-opinion=XR] {
 	background: darkblue;
 }
 
-[data-opinion=X] {
+[data-opinion=O] {
 	background: black;
 }
 

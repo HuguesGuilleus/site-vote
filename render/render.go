@@ -120,15 +120,3 @@ func (m *merge) mergeVotes(votes []driver2024legislative.Vote) {
 		m.Votes[v.Opinion] += uint(v.Voix)
 	}
 }
-
-func percent(part, total uint) uint {
-	if part == 0 || total == 0 {
-		return 0
-	}
-	p := part * 10 * 100 / total
-	if p%10 > 4 {
-		return p/10 + 1
-	} else {
-		return p / 10
-	}
-}
