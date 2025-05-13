@@ -1,6 +1,10 @@
 package votation
 
-import "time"
+import (
+	"cmp"
+	"slices"
+	"time"
+)
 
 // Polling station (fr: bureau de vote)
 type Station struct {
@@ -52,4 +56,37 @@ func NewSummary(v *VotationResult) (s Summary) {
 		s.Result[r.Opinion] += r.Result
 	}
 	return
+}
+
+func MergeStation(stationsArgs ...[]*Station) []*Station {
+	allStations := make([]*Station, 0)
+	for _, stations := range stationsArgs {
+		allStations = append(allStations, stations...)
+	}
+
+	slices.SortFunc(allStations, func(a, b *Station) int {
+		return cmp.Or(
+			cmp.Compare(a.Departement, b.Departement),
+			cmp.Compare(a.City, b.City),
+			cmp.Compare(a.CodeStation, b.CodeStation),
+		)
+	})
+
+	if len(allStations) <= 1 {
+		return allStations
+	}
+
+	w := 0
+	for _, s := range allStations[1:] {
+		p := allStations[w]
+		if p.Departement == s.Departement && p.City == s.City && p.CodeStation == s.CodeStation {
+			p.Votation = append(p.Votation, s.Votation...)
+		} else {
+			w++
+			allStations[w] = s
+		}
+	}
+	w++
+	clear(allStations[w:])
+	return allStations[:w]
 }

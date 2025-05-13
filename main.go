@@ -24,7 +24,10 @@ func main() {
 	// 	render.RenderBV(t, bv)
 	// }
 
-	stations := legislative2024.Fetch(t)
+	stations := votation.MergeStation(
+		legislative2024.Fetch(t),
+	)
+
 	for _, s := range stations {
 		if s.Departement != votation.DepartementAube {
 			continue
