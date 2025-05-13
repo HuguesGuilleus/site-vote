@@ -34,12 +34,11 @@ type Result struct {
 }
 
 type Option struct {
-	Position  uint
-	Party     string
-	Opinion   Opinion
-	FirstName string
-	LastName  string
-	Gender    Gender
+	Position uint
+	Party    string
+	Opinion  Opinion
+	Name     string
+	Gender   Gender
 }
 
 type Summary struct {

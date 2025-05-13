@@ -77,12 +77,11 @@ func parseResults(r *votation.VotationResult, line []string) (err error) {
 
 	r.Result = append(r.Result, votation.Result{
 		Option: &votation.Option{
-			Position:  parseUint(&err, line[0]),
-			Party:     line[1],
-			Opinion:   parseOpinion(&err, line[1]),
-			LastName:  line[2],
-			FirstName: line[3],
-			Gender:    parseGender(&err, line[4]),
+			Position: parseUint(&err, line[0]),
+			Party:    line[1],
+			Opinion:  parseOpinion(&err, line[1]),
+			Name:     line[3] + " " + line[2],
+			Gender:   parseGender(&err, line[4]),
 		},
 		Result: parseUint(&err, line[5]),
 	})

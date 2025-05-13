@@ -55,6 +55,9 @@ func RenderStation(t *tool.Tool, s *votation.Station) {
 								render.N("th", "Liste"),
 							),
 							render.S(v.Result, "", func(r votation.Result) render.Node {
+								if r.Result == 0 {
+									return render.Z
+								}
 								return render.N("tr",
 									render.N("td.r", r.Result),
 									render.N("td.r", percent(r.Result, v.Register), "%"),
@@ -63,7 +66,7 @@ func RenderStation(t *tool.Tool, s *votation.Station) {
 										r.Party),
 									render.N("td",
 										"[", r.Position, "] ",
-										r.FirstName, " ", r.LastName,
+										r.Name,
 										" ", r.Gender.String(),
 									),
 								)

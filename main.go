@@ -5,6 +5,7 @@ import (
 	"lfi/data-vote/render"
 	"lfi/data-vote/votation"
 	"lfi/data-vote/votation/legislative2024"
+	"lfi/data-vote/votation/ue2024"
 	"sniffle/tool"
 )
 
@@ -26,6 +27,7 @@ func main() {
 
 	stations := votation.MergeStation(
 		legislative2024.Fetch(t),
+		ue2024.Parse(t),
 	)
 
 	for _, s := range stations {
@@ -34,7 +36,4 @@ func main() {
 		}
 		render.RenderStation(t, s)
 	}
-
-	// r := t.Fetch(fetch.URL("https://static.data.gouv.fr/resources/resultats-des-elections-europeennes-du-9-juin-2024/20240613-154804/resultats-definitifs-par-bureau-de-vote.csv"))
-	// io.Copy(os.Stdout, io.LimitReader(r.Body, 4096*5))
 }
