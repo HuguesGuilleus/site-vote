@@ -87,5 +87,18 @@ func MergeStation(stationsArgs ...[]*Station) []*Station {
 	}
 	w++
 	clear(allStations[w:])
-	return allStations[:w]
+	allStations = allStations[:w]
+
+	for _, s := range allStations {
+		for _, v := range s.Votation {
+			slices.SortFunc(v.Result, func(a, b Result) int {
+				return cmp.Or(
+					cmp.Compare(a.Opinion, b.Opinion),
+					cmp.Compare(a.Position, b.Position),
+				)
+			})
+		}
+	}
+
+	return allStations
 }
