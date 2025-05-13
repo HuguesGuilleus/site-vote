@@ -3,6 +3,7 @@ package main
 import (
 	_ "embed"
 	"lfi/data-vote/render"
+	"lfi/data-vote/votation"
 	"lfi/data-vote/votation/legislative2024"
 	"sniffle/tool"
 )
@@ -25,7 +26,7 @@ func main() {
 
 	stations := legislative2024.Fetch(t)
 	for _, s := range stations {
-		if s.DépartementCode != "10" {
+		if s.Departement != votation.DepartementAube {
 			continue
 		}
 		render.RenderStation(t, s)

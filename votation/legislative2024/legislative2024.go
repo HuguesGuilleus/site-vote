@@ -44,8 +44,11 @@ func parseLine(line []string) (_ *votation.Station, err error) {
 	r.Abstention = parseUint(&err, line[8])
 	r.Blank = parseUint(&err, line[13])
 	r.Null = parseUint(&err, line[16])
+	departement := votation.DepartementName2Const[line[1]]
 	if err != nil {
 		return nil, err
+	} else if departement == 0 {
+		return nil, fmt.Errorf("Unknow departement %q", line[1])
 	}
 
 	err = parseResults(&r, line[19:])
@@ -54,10 +57,9 @@ func parseLine(line []string) (_ *votation.Station, err error) {
 	}
 
 	return &votation.Station{
-		DépartementCode: line[0],
-		DépartementName: line[1],
-		City:            line[3],
-		CodeStation:     line[4],
+		Departement: departement,
+		City:        line[3],
+		CodeStation: line[4],
 		Votation: []votation.Votation{
 			{Name: voteName, Date: voteDate, VotationResult: r},
 		},

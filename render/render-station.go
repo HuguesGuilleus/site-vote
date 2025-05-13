@@ -12,7 +12,7 @@ var componentNav = render.Z
 var componentFooter = render.Z
 
 func RenderStation(t *tool.Tool, s *votation.Station) {
-	p := fmt.Sprintf("/vote/%s/%s/%s.html", s.DépartementCode, s.City, s.CodeStation)
+	p := fmt.Sprintf("/vote/%s/%s/%s.html", s.Departement.Code(), s.City, s.CodeStation)
 	t.WriteFile(p, render.Merge(render.Na("html", "lang", "fr").N(
 		render.N("head",
 			render.H(`<meta charset=utf-8>`),
@@ -25,7 +25,7 @@ func RenderStation(t *tool.Tool, s *votation.Station) {
 			render.N("header",
 				render.N("div.headerRow",
 					render.Na("a.headerBlock", "href", "../../..").N("vote"),
-					render.Na("a.headerBlock", "href", "..").N(s.DépartementName),
+					render.Na("a.headerBlock", "href", "..").N(s.Departement.String()),
 					render.Na("a.headerBlock", "href", ".").N(s.City),
 				),
 				render.N("div.headerRow",

@@ -4,11 +4,10 @@ import "time"
 
 // Polling station (fr: bureau de vote)
 type Station struct {
-	DépartementCode string
-	DépartementName string
-	City            string
-	CodeStation     string
-	Votation        []Votation
+	Departement Departement
+	City        string
+	CodeStation string
+	Votation    []Votation
 }
 
 type Votation struct {
