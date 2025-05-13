@@ -17,14 +17,6 @@ func main() {
 
 	t.WriteFile("/vote/style.css", style)
 
-	// bureaux := driver2024legislative.Parse(t)
-	// for _, bv := range bureaux {
-	// 	if bv.DépartementCode != "10" {
-	// 		continue
-	// 	}
-	// 	render.RenderBV(t, bv)
-	// }
-
 	stations := votation.MergeStation(
 		legislative2024.Fetch(t),
 		ue2024.Parse(t),
