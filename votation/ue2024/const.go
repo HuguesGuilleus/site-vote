@@ -6,6 +6,7 @@ import (
 )
 
 const voteName = "Européenne 2024"
+const voteCode = "2024_UE"
 
 var voteDate = time.Date(2024, time.June, 9, 0, 0, 0, 0, time.UTC)
 
@@ -47,7 +48,7 @@ var options = []*votation.Option{
 	{Position: 31, Party: "LDVG", Opinion: votation.OpinionLeft, Name: "EUROPE TERRITOIRES ÉCOLOGIE"},
 	{Position: 32, Party: "LDIV", Opinion: votation.OpinionOther, Name: "LA RUCHE CITOYENNE"},
 	{Position: 33, Party: "LCOM", Opinion: votation.OpinionLeft, Name: "GAUCHE UNIE POUR LE MONDE DU TRAVAIL SOUTENUE PAR FABIEN ROUSSEL"},
-	{Position: 34, Party: "LDIV", Opinion: votation.OpinionCenter, Name: "DEFENDRE LES ENFANTS"},
+	{Position: 34, Party: "LDIV", Opinion: votation.OpinionOther, Name: "DEFENDRE LES ENFANTS"},
 	{Position: 35, Party: "LECO", Opinion: votation.OpinionCenter, Name: "EAC (ÉCOLOGIE AU CENTRE)"},
 	{Position: 36, Party: "LDIV", Opinion: votation.OpinionOther, Name: "DEMOCRATIE REPRESENTATIVE"},
 	{Position: 37, Party: "LDIV", Opinion: votation.OpinionOther, Name: "ESPERANTO LANGUE COMMUNE"},

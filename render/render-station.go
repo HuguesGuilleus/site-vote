@@ -17,7 +17,7 @@ func RenderStation(t *tool.Tool, s *votation.Station) {
 		render.N("head",
 			render.H(`<meta charset=utf-8>`),
 			render.H(`<meta name=viewport content="width=device-width,initial-scale=1">`),
-			render.H(`<link rel=stylesheet href=/vote/style.css>`),
+			render.H(`<link rel=stylesheet href=../../style.css>`),
 			render.N("title", s.City, ": ", s.CodeStation),
 		),
 		render.N("body",
@@ -33,10 +33,26 @@ func RenderStation(t *tool.Tool, s *votation.Station) {
 				),
 			),
 			render.N("main",
+				render.N("div.summary", render.S(s.Votation, "", func(v votation.Votation) render.Node {
+					sum := votation.NewSummary(&v.VotationResult)
+					return render.N("",
+						render.Na("a.summaryItem", "href", "#"+v.Code).N(v.Code),
+						render.N("div.bar", render.S2(sum.Result[:], "", func(o int, voices uint) render.Node {
+							opi := votation.Opinion(o)
+							if voices == 0 || opi == votation.OpinionAbstention {
+								return render.Z
+							}
+							return render.Na("div.option",
+								"data-opinion", opi.String()).
+								A("style", fmt.Sprintf("width:%d%%", percent(voices, v.Register))).
+								N()
+						})),
+					)
+				})),
 				render.S(s.Votation, "", func(v votation.Votation) render.Node {
 					sum := votation.NewSummary(&v.VotationResult)
 					return render.N("",
-						render.N("h1", "[", v.Date.Format(time.DateOnly), "] ", v.Name),
+						render.Na("h1", "id", v.Code).N("[", v.Date.Format(time.DateOnly), "] ", v.Name),
 						render.N("div.bar", render.S2(sum.Result[:], "", func(o int, voices uint) render.Node {
 							opi := votation.Opinion(o)
 							if voices == 0 || opi == votation.OpinionAbstention {
@@ -59,9 +75,9 @@ func RenderStation(t *tool.Tool, s *votation.Station) {
 									return render.Z
 								}
 								return render.N("tr",
-									render.N("td.r", r.Result),
-									render.N("td.r", percent(r.Result, v.Register), "%"),
-									render.N("td",
+									render.N("td.r.wnowrap", r.Result),
+									render.N("td.r.wnowrap", percent(r.Result, v.Register), "%"),
+									render.N("td.wnowrap",
 										render.Na("div.copinion", "data-opinion", r.Opinion.String()),
 										r.Party),
 									render.N("td",
@@ -72,28 +88,28 @@ func RenderStation(t *tool.Tool, s *votation.Station) {
 								)
 							}),
 							render.N("tr",
-								render.N("td.r", v.Blank),
-								render.N("td.r", percent(v.Blank, v.Register), "%"),
-								render.N("td",
+								render.N("td.r.wnowrap", v.Blank),
+								render.N("td.r.wnowrap", percent(v.Blank, v.Register), "%"),
+								render.N("td.wnowrap",
 									render.Na("div.copinion", "data-opinion", votation.OpinionBlank.String()),
 									"Blanc"),
 							),
 							render.N("tr",
-								render.N("td.r", v.Null),
-								render.N("td.r", percent(v.Null, v.Register), "%"),
-								render.N("td",
+								render.N("td.r.wnowrap", v.Null),
+								render.N("td.r.wnowrap", percent(v.Null, v.Register), "%"),
+								render.N("td.wnowrap",
 									render.Na("div.copinion", "data-opinion", votation.OpinionNull.String()),
 									"Nul"),
 							),
 							render.N("tr",
-								render.N("td.r", v.Abstention),
-								render.N("td.r", percent(v.Abstention, v.Register), "%"),
-								render.N("td",
+								render.N("td.r.wnowrap", v.Abstention),
+								render.N("td.r.wnowrap", percent(v.Abstention, v.Register), "%"),
+								render.N("td.wnowrap",
 									render.Na("div.copinion", "data-opinion", votation.OpinionAbstention.String()),
 									"Abstention"),
 							),
 							render.N("tr",
-								render.N("td.r", v.Register),
+								render.N("td.r.wnowrap", v.Register),
 								render.N("td"),
 								render.N("td", "Total"),
 							),

@@ -17,6 +17,7 @@ type Station struct {
 type Votation struct {
 	Name string
 	Date time.Time
+	Code string
 	VotationResult
 }
 

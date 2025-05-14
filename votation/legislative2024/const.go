@@ -7,5 +7,6 @@ const header = `Code département;Libellé département;Code commune;Libellé co
 const url = "https://static.data.gouv.fr/resources/elections-legislatives-des-30-juin-et-7-juillet-2024-resultats-definitifs-du-1er-tour/20240710-171445/resultats-definitifs-par-bureau-de-vote.csv"
 
 const voteName = "Législatives 2024"
+const voteCode = "2024_L"
 
 var voteDate = time.Date(2024, time.June, 30, 0, 0, 0, 0, time.UTC)

@@ -61,7 +61,7 @@ func parseLine(line []string) (_ *votation.Station, err error) {
 		City:        line[5],
 		CodeStation: strings.TrimLeft(line[6], "0"),
 		Votation: []votation.Votation{
-			{Name: voteName, Date: voteDate, VotationResult: r},
+			{Name: voteName, Date: voteDate, Code: voteCode, VotationResult: r},
 		},
 	}, nil
 }

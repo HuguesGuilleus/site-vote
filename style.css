@@ -17,8 +17,9 @@ footer {
 main,
 header {
 	margin: 0 auto;
-	width: min(90ex, 100%);
+	width: min(120ex, 100%);
 	padding: 1ex;
+	box-sizing: border-box;
 }
 
 footer {
@@ -54,6 +55,16 @@ header {
 	}
 }
 
+div.summary {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	gap: 0 1ex;
+
+	a {
+		color: inherit;
+	}
+}
+
 div.bar {
 	display: flex;
 	background: lightgrey;
@@ -64,7 +75,6 @@ div.bar {
 	}
 }
 
-
 table {
 	width: 100%;
 	border-collapse: collapse;
@@ -72,6 +82,10 @@ table {
 
 	td.r {
 		text-align: right;
+	}
+
+	td.wnowrap {
+		white-space: nowrap;
 	}
 
 	td,

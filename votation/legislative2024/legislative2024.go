@@ -61,7 +61,7 @@ func parseLine(line []string) (_ *votation.Station, err error) {
 		City:        line[3],
 		CodeStation: line[4],
 		Votation: []votation.Votation{
-			{Name: voteName, Date: voteDate, VotationResult: r},
+			{Name: voteName, Date: voteDate, Code: voteCode, VotationResult: r},
 		},
 	}, nil
 }
@@ -117,9 +117,9 @@ func parseOpinion(perr *error, s string) votation.Opinion {
 		return votation.OpinionFarLeft
 	case "COM", "FI", "ECO", "UG", "VEC":
 		return votation.OpinionLeft
-	case "SOC", "RDG", "ENS", "DVC", "DVG":
+	case "SOC", "RDG", "DVC", "DVG":
 		return votation.OpinionCenter
-	case "LR", "UDI", "DVD", "DSV", "HOR":
+	case "ENS", "LR", "UDI", "DVD", "DSV", "HOR":
 		return votation.OpinionRight
 	case "REC", "RN", "DXD", "EXD", "UXD":
 		return votation.OpinionFarRight
