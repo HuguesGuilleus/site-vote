@@ -2,6 +2,7 @@ package main
 
 import (
 	_ "embed"
+	"lfi/data-vote/common"
 	"lfi/data-vote/render"
 	"lfi/data-vote/votation"
 	"lfi/data-vote/votation/legislative2024"
@@ -15,17 +16,71 @@ var style []byte
 func main() {
 	t := tool.New(tool.CLI(nil))
 
-	t.WriteFile("/vote/style.css", style)
-
-	stations := votation.MergeStation(
-		legislative2024.Fetch(t),
-		ue2024.Parse(t),
+	t.Info("fetch ...")
+	events := common.Merge(
+		tr(legislative2024.Fetch(t)),
+		tr(ue2024.Parse(t)),
 	)
 
-	for _, s := range stations {
-		if s.Departement != votation.DepartementAube {
-			continue
-		}
-		render.RenderStation(t, s)
+	t.Info("render ...")
+	t.WriteFile("/style.css", style)
+	render.RenderFrance(t, common.AllFrance(events))
+	for z := range common.ByDepartement(events, skip) {
+		render.RenderDepartement(t, z)
 	}
+	for z := range common.ByCity(events, skip) {
+		render.RenderCity(t, z)
+	}
+	for z := range common.ByStation(events, skip) {
+		render.RenderStation(t, z)
+	}
+}
+
+func skip(d common.Departement, city string) bool {
+	switch d {
+	case common.DepartementAube:
+	default:
+		return true
+	}
+	switch city {
+	case "", "Troyes", "Saint-Julien-les-Villas":
+		return false
+	default:
+		return true
+	}
+}
+
+func tr(stations []*votation.Station) (events []*common.Event) {
+	events = make([]*common.Event, len(stations))
+	for i, s := range stations {
+		v := s.Votation[0]
+		options := make([]common.Option, len(v.Result))
+		for i, r := range v.Result {
+			options[i] = common.Option{
+				Result:   r.Result,
+				Position: r.Position,
+				Party:    r.Party,
+				Opinion:  common.Opinion(r.Opinion),
+				Name:     r.Name,
+				Gender:   common.Gender(r.Gender),
+			}
+		}
+
+		events[i] = &common.Event{
+			Departement: common.Departement(s.Departement),
+			City:        s.City,
+			StationID:   s.CodeStation,
+
+			VoteID:   v.Code,
+			VoteName: v.Name,
+
+			Register:   v.Register,
+			Abstention: v.Abstention,
+			Blank:      v.Blank,
+			Null:       v.Null,
+
+			Option: options,
+		}
+	}
+	return
 }

@@ -2,6 +2,7 @@ package render
 
 import (
 	"fmt"
+	"lfi/data-vote/common"
 	"lfi/data-vote/votation"
 	"sniffle/tool"
 	"sniffle/tool/render"
@@ -11,7 +12,7 @@ import (
 var componentNav = render.Z
 var componentFooter = render.Z
 
-func RenderStation(t *tool.Tool, s *votation.Station) {
+func RenderStation0(t *tool.Tool, s *votation.Station) {
 	p := fmt.Sprintf("/vote/%s/%s/%s.html", s.Departement.Code(), s.City, s.CodeStation)
 	t.WriteFile(p, render.Merge(render.Na("html", "lang", "fr").N(
 		render.N("head",
@@ -29,40 +30,20 @@ func RenderStation(t *tool.Tool, s *votation.Station) {
 					render.Na("a.headerBlock", "href", ".").N(s.City),
 				),
 				render.N("div.headerRow",
-					render.N("div.headerBlock.main", "Bureau:", s.CodeStation),
+					render.N("div.headerBlock.main", "Bureau: ", s.CodeStation),
 				),
 			),
 			render.N("main",
 				render.N("div.summary", render.S(s.Votation, "", func(v votation.Votation) render.Node {
-					sum := votation.NewSummary(&v.VotationResult)
 					return render.N("",
 						render.Na("a.summaryItem", "href", "#"+v.Code).N(v.Code),
-						render.N("div.bar", render.S2(sum.Result[:], "", func(o int, voices uint) render.Node {
-							opi := votation.Opinion(o)
-							if voices == 0 || opi == votation.OpinionAbstention {
-								return render.Z
-							}
-							return render.Na("div.option",
-								"data-opinion", opi.String()).
-								A("style", fmt.Sprintf("width:%d%%", percent(voices, v.Register))).
-								N()
-						})),
+						renderBar0(votation.NewSummary(&v.VotationResult)),
 					)
 				})),
 				render.S(s.Votation, "", func(v votation.Votation) render.Node {
-					sum := votation.NewSummary(&v.VotationResult)
 					return render.N("",
 						render.Na("h1", "id", v.Code).N("[", v.Date.Format(time.DateOnly), "] ", v.Name),
-						render.N("div.bar", render.S2(sum.Result[:], "", func(o int, voices uint) render.Node {
-							opi := votation.Opinion(o)
-							if voices == 0 || opi == votation.OpinionAbstention {
-								return render.Z
-							}
-							return render.Na("div.option",
-								"data-opinion", opi.String()).
-								A("style", fmt.Sprintf("width:%d%%", percent(voices, v.Register))).
-								N()
-						})),
+						renderBar0(votation.NewSummary(&v.VotationResult)),
 						render.N("table",
 							render.N("tr",
 								render.N("th", "Voix"),
@@ -121,6 +102,32 @@ func RenderStation(t *tool.Tool, s *votation.Station) {
 			componentFooter,
 		),
 	)))
+}
+
+func renderBar0(sum votation.Summary) render.Node {
+	return render.N("div.bar", render.S2(sum.Result[:], "", func(o int, voices uint) render.Node {
+		opi := votation.Opinion(o)
+		if voices == 0 || opi == votation.OpinionAbstention {
+			return render.Z
+		}
+		return render.Na("div.option",
+			"data-opinion", opi.String()).
+			A("style", fmt.Sprintf("width:%d%%", percent(voices, sum.Register))).
+			N()
+	}))
+}
+
+func renderBar(sum *common.Summary) render.Node {
+	return render.N("div.bar", render.S2(sum.Result[:], "", func(o int, voices uint) render.Node {
+		opi := votation.Opinion(o)
+		if voices == 0 || opi == votation.OpinionAbstention {
+			return render.Z
+		}
+		return render.Na("div.option",
+			"data-opinion", opi.String()).
+			A("style", fmt.Sprintf("width:%d%%", percent(voices, sum.Register))).
+			N()
+	}))
 }
 
 func percent(part, total uint) uint {

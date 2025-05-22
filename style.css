@@ -28,6 +28,15 @@ footer {
 	margin-top: auto;
 }
 
+a {
+	text-decoration: none;
+	color: inherit;
+
+	a&:hover {
+		background-color: dodgerblue;
+	}
+}
+
 /* HEADER */
 
 header {
@@ -38,16 +47,12 @@ header {
 	}
 
 	.headerBlock {
-		background: silver;
+		background: #ed5fb1a0;
 		font-size: 150%;
 		font-weight: bold;
 		padding: .5ex 1ex;
 		text-decoration: none;
 		color: inherit;
-
-		a&:hover {
-			background-color: dodgerblue;
-		}
 
 		&.main {
 			font-size: 250%;
@@ -59,19 +64,18 @@ div.summary {
 	display: grid;
 	grid-template-columns: auto 1fr;
 	gap: 0 1ex;
-
-	a {
-		color: inherit;
-	}
 }
 
-div.bar {
+ul.sub {
 	display: flex;
-	background: lightgrey;
-	margin-bottom: 1ex;
+	flex-wrap: wrap;
+	padding: 0;
+	list-style: none;
+	gap: 1ex;
 
-	div.option {
-		height: 2ex;
+	li {
+		padding: 0 1ex;
+		background: #ed5fb1a0;
 	}
 }
 
@@ -93,7 +97,16 @@ table {
 		border: grey 1px solid;
 		padding: .2ex .5ex;
 	}
+}
 
+div.bar {
+	display: flex;
+	background: lightgrey;
+	margin-bottom: 1ex;
+
+	div.option {
+		height: 2ex;
+	}
 }
 
 [data-opinion=XL] {
