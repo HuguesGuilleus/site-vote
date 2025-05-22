@@ -13,6 +13,9 @@ import (
 //go:embed style.css
 var style []byte
 
+//go:embed favicon.ico
+var favicon []byte
+
 func main() {
 	t := tool.New(tool.CLI(nil))
 
@@ -24,6 +27,7 @@ func main() {
 
 	t.Info("render ...")
 	t.WriteFile("/style.css", style)
+	t.WriteFile("/favicon.ico", favicon)
 	render.RenderFrance(t, common.AllFrance(events))
 	for z := range common.ByDepartement(events, skip) {
 		render.RenderDepartement(t, z)
