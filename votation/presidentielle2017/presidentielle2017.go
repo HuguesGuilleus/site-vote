@@ -85,7 +85,7 @@ func parseOption(line []string, options []common.Option) []common.Option {
 var constOptions = common.ConstOptions(
 	"XR	DLF	M	Nicolas DUPONT-AIGNAN",
 	"XR	RN	F	Marine LE PEN",
-	"C	EM	M	Emmanuel MACRON",
+	"R	EM	M	Emmanuel MACRON",
 	"L	PS	M	Benoît HAMON",
 	"XL	LO	F	Nathalie ARTHAUD",
 	"XL	NPA	M	Philippe POUTOU",

@@ -6,6 +6,7 @@ import (
 	"lfi/data-vote/render"
 	"lfi/data-vote/votation/legislative2024"
 	"lfi/data-vote/votation/presidentielle2017"
+	"lfi/data-vote/votation/presidentielle2022"
 	"lfi/data-vote/votation/ue2024"
 	"sniffle/tool"
 )
@@ -24,6 +25,7 @@ func main() {
 		legislative2024.Fetch,
 		ue2024.Fetch,
 		presidentielle2017.Fetch,
+		presidentielle2022.Fetch,
 	)
 
 	t.Info("render ...")

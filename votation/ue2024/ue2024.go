@@ -8,7 +8,7 @@ import (
 )
 
 func Fetch(t *tool.Tool) []*common.Event {
-	lines := csvtool.Fetch(t, url, header)
+	lines := csvtool.FetchCSV(t, url, header)
 	events := make([]*common.Event, len(lines))
 	for i, line := range lines {
 		events[i] = parseEvent(line)
