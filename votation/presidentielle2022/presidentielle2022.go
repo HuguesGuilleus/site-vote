@@ -26,7 +26,7 @@ func Fetch(t *tool.Tool) []*common.Event {
 }
 
 func parseEvent(line []string) *common.Event {
-	options := append(make([]common.Option, 0, len(constOption)), constOption...)
+	options := constOptions.Clone()
 	for i := range options {
 		options[i].Result = csvtool.ParseUint(line[21+i*7+4])
 	}
@@ -48,7 +48,7 @@ func parseEvent(line []string) *common.Event {
 	}
 }
 
-var constOption = common.ConstOptions(
+var constOptions = common.ConstOptions(
 	`XL	LO	F	Nathalie ARTHAUD`,
 	`L	PCF	M	Fabien ROUSSEL`,
 	`R	EM	M	Emmanuel	MACRON`,

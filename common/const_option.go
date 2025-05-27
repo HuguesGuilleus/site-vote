@@ -2,9 +2,17 @@ package common
 
 import "strings"
 
+// All prepared options for an election.
+// The result field is set to 0.
+type ConstOption []Option
+
+func (c ConstOption) Clone() []Option {
+	return append(make([]Option, 0, len(c)), c...)
+}
+
 // Parse option for a national votation with people (presidential).
 // Format (use tabulation): OPINION PARTY GENDER NAME.
-func ConstOptions(args ...string) (options []Option) {
+func ConstOptions(args ...string) (options ConstOption) {
 	options = make([]Option, 0, len(args))
 	for i, a := range args {
 		s := strings.Split(a, "\t")
@@ -46,7 +54,7 @@ func ConstOptions(args ...string) (options []Option) {
 
 // Parse option for a constant national votation with list (like EU).
 // Format (use tabulation): OPINION PARTY NAME.
-func ConstOptionsList(args ...string) (options []Option) {
+func ConstOptionsList(args ...string) (options ConstOption) {
 	options = make([]Option, 0, len(args))
 	for i, a := range args {
 		s := strings.Split(a, "\t")

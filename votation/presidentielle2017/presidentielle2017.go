@@ -53,6 +53,11 @@ func globalParse(t *tool.Tool) (lines [][]string) {
 }
 
 func parseEvent(line []string) *common.Event {
+	options := constOptions.Clone()
+	for i := range options {
+		options[i].Result = csvtool.ParseUint(line[21+i*7+4])
+	}
+
 	return &common.Event{
 		Departement: common.DepartementName2Const[line[1]],
 		City:        line[5],
@@ -66,20 +71,8 @@ func parseEvent(line []string) *common.Event {
 		Blank:      csvtool.ParseUint(line[12]),
 		Null:       csvtool.ParseUint(line[15]),
 
-		Option: parseOption(line[21:], make([]common.Option, 0, 11)),
+		Option: options,
 	}
-}
-
-func parseOption(line []string, options []common.Option) []common.Option {
-	if len(line) == 0 {
-		return options
-	}
-
-	o := constOptions[len(options)]
-	o.Result = csvtool.ParseUint(line[4])
-	options = append(options, o)
-
-	return parseOption(line[7:], options)
 }
 
 var constOptions = common.ConstOptions(

@@ -17,8 +17,7 @@ func Fetch(t *tool.Tool) []*common.Event {
 }
 
 func parseEvent(line []string) *common.Event {
-	options := make([]common.Option, 38)
-	copy(options, constOptions)
+	options := constOptions.Clone()
 	for i := range options {
 		options[i].Result = csvtool.ParseUint(line[21+i*8+4])
 	}
