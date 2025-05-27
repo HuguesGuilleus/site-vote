@@ -23,7 +23,7 @@ func main() {
 	t.Info("fetch ...")
 	events := common.Call(t,
 		func(t *tool.Tool) []*common.Event { return tr(legislative2024.Fetch(t)) },
-		func(t *tool.Tool) []*common.Event { return tr(ue2024.Parse(t)) },
+		ue2024.Fetch,
 		presidentielle2017.Fetch,
 	)
 

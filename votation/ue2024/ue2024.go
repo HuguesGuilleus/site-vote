@@ -1,99 +1,41 @@
 package ue2024
 
 import (
-	"encoding/csv"
-	"fmt"
-	"lfi/data-vote/votation"
+	"lfi/data-vote/common"
+	"lfi/data-vote/common/csvtool"
 	"sniffle/tool"
-	"sniffle/tool/fetch"
-	"strconv"
 	"strings"
 )
 
-func Parse(t *tool.Tool) []*votation.Station {
-	body := t.Fetch(fetch.URL(url)).Body
-	defer body.Close()
-
-	r := csv.NewReader(body)
-	r.Comma = ';'
-	lines, err := r.ReadAll()
-	if err != nil {
-		t.Error("csv.parse", "err", err.Error())
-		return nil
-	} else if strings.Join(lines[0], ";") != header {
-		t.Error("wrong header")
-		return nil
+func Fetch(t *tool.Tool) []*common.Event {
+	lines := csvtool.Fetch(t, url, header)
+	events := make([]*common.Event, len(lines))
+	for i, line := range lines {
+		events[i] = parseEvent(line)
 	}
-
-	bureaux := make([]*votation.Station, 0, len(lines[1:]))
-	for i, line := range lines[1:] {
-		bv, err := parseLine(line)
-		if err != nil {
-			t.Warn("parse line", "err", err.Error(), "line", i+2)
-			continue
-		}
-		bureaux = append(bureaux, bv)
-	}
-
-	return bureaux
+	return events
 }
 
-func parseLine(line []string) (_ *votation.Station, err error) {
-	r := votation.VotationResult{}
-	r.Register = parseUint(&err, line[7])
-	r.Abstention = parseUint(&err, line[10])
-	r.Blank = parseUint(&err, line[15])
-	r.Null = parseUint(&err, line[18])
-	departement := votation.DepartementName2Const[line[3]]
-	if err != nil {
-		return nil, err
-	} else if departement == 0 {
-		return nil, fmt.Errorf("Unknow departement %q", line[1])
+func parseEvent(line []string) *common.Event {
+	options := make([]common.Option, 38)
+	copy(options, constOptions)
+	for i := range options {
+		options[i].Result = csvtool.ParseUint(line[21+i*8+4])
 	}
 
-	r.Result = make([]votation.Result, 0, 38)
-	if err := parseOption(&r, line[21:]); err != nil {
-		return nil, err
-	}
-
-	return &votation.Station{
-		Departement: departement,
+	return &common.Event{
+		Departement: common.DepartementName2Const[line[3]],
 		City:        line[5],
-		CodeStation: strings.TrimLeft(line[6], "0"),
-		Votation: []votation.Votation{
-			{Name: voteName, Date: voteDate, Code: voteCode, VotationResult: r},
-		},
-	}, nil
-}
+		StationID:   strings.TrimLeft(line[6], "0"),
 
-func parseOption(r *votation.VotationResult, line []string) (err error) {
-	if len(line) == 0 {
-		return nil
+		VoteID:   voteID,
+		VoteName: voteName,
+
+		Register:   csvtool.ParseUint(line[7]),
+		Abstention: csvtool.ParseUint(line[10]),
+		Blank:      csvtool.ParseUint(line[15]),
+		Null:       csvtool.ParseUint(line[18]),
+
+		Option: options,
 	}
-
-	result := parseUint(&err, line[4])
-	if err != nil {
-		return
-	}
-
-	r.Result = append(r.Result, votation.Result{
-		Option: options[len(r.Result)],
-		Result: result,
-	})
-
-	return parseOption(r, line[8:])
-}
-
-func parseUint(perr *error, s string) uint {
-	if *perr != nil {
-		return 0
-	} else if s == "-1" {
-		return 0
-	}
-	u, err := strconv.ParseUint(s, 10, 30)
-	if err != nil {
-		*perr = err
-		return 0
-	}
-	return uint(u)
 }
