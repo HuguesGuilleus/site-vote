@@ -21,10 +21,10 @@ func main() {
 	t := tool.New(tool.CLI(nil))
 
 	t.Info("fetch ...")
-	events := common.Merge(
-		tr(legislative2024.Fetch(t)),
-		tr(ue2024.Parse(t)),
-		presidentielle2017.Fetch(t),
+	events := common.Call(t,
+		func(t *tool.Tool) []*common.Event { return tr(legislative2024.Fetch(t)) },
+		func(t *tool.Tool) []*common.Event { return tr(ue2024.Parse(t)) },
+		presidentielle2017.Fetch,
 	)
 
 	t.Info("render ...")

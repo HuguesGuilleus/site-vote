@@ -5,20 +5,31 @@ import (
 	"iter"
 	"maps"
 	"slices"
+	"sniffle/tool"
+	"sync"
 )
 
-// Merges all events, and sort it.
-func Merge(args ...[]*Event) (events []*Event) {
-	l := 0
-	for _, a := range args {
-		l += len(a)
-	}
-	events = make([]*Event, 0, l)
-	for _, a := range args {
-		events = append(events, a...)
-	}
+func Call(t *tool.Tool, votations ...func(t *tool.Tool) []*Event) []*Event {
+	all := make([]*Event, 0)
 
-	slices.SortFunc(events, func(a, b *Event) int {
+	allMutex := sync.Mutex{}
+	wg := sync.WaitGroup{}
+	wg.Add(len(votations))
+	for _, v := range votations {
+		go func() {
+			defer wg.Done()
+			events := v(t)
+			for _, e := range events {
+				slices.SortFunc(e.Option, optionCompare)
+			}
+			allMutex.Lock()
+			defer allMutex.Unlock()
+			all = append(all, events...)
+		}()
+	}
+	wg.Wait()
+
+	slices.SortFunc(all, func(a, b *Event) int {
 		return cmp.Or(
 			cmp.Compare(a.Departement, b.Departement),
 			cmp.Compare(a.City, b.City),
@@ -27,11 +38,7 @@ func Merge(args ...[]*Event) (events []*Event) {
 		)
 	})
 
-	for _, e := range events {
-		slices.SortFunc(e.Option, optionCompare)
-	}
-
-	return
+	return all
 }
 
 func AllFrance(events []*Event) *Zone {
