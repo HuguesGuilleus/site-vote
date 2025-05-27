@@ -4,7 +4,6 @@ import (
 	_ "embed"
 	"lfi/data-vote/common"
 	"lfi/data-vote/render"
-	"lfi/data-vote/votation"
 	"lfi/data-vote/votation/legislative2024"
 	"lfi/data-vote/votation/presidentielle2017"
 	"lfi/data-vote/votation/ue2024"
@@ -54,39 +53,4 @@ func skip(d common.Departement, city string) bool {
 	default:
 		return true
 	}
-}
-
-func tr(stations []*votation.Station) (events []*common.Event) {
-	events = make([]*common.Event, len(stations))
-	for i, s := range stations {
-		v := s.Votation[0]
-		options := make([]common.Option, len(v.Result))
-		for i, r := range v.Result {
-			options[i] = common.Option{
-				Result:   r.Result,
-				Position: r.Position,
-				Party:    r.Party,
-				Opinion:  common.Opinion(r.Opinion),
-				Name:     r.Name,
-				Gender:   common.Gender(r.Gender),
-			}
-		}
-
-		events[i] = &common.Event{
-			Departement: common.Departement(s.Departement),
-			City:        s.City,
-			StationID:   s.CodeStation,
-
-			VoteID:   v.Code,
-			VoteName: v.Name,
-
-			Register:   v.Register,
-			Abstention: v.Abstention,
-			Blank:      v.Blank,
-			Null:       v.Null,
-
-			Option: options,
-		}
-	}
-	return
 }

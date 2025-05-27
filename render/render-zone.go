@@ -2,7 +2,6 @@ package render
 
 import (
 	"lfi/data-vote/common"
-	"lfi/data-vote/votation"
 	"sniffle/tool"
 	"sniffle/tool/render"
 )
@@ -176,21 +175,21 @@ func renderVoteTable(v *common.Vote) render.Node {
 			render.N("td.r.wnowrap", v.Blank),
 			render.N("td.r.wnowrap", percent(v.Blank, v.Register), "%"),
 			render.N("td.wnowrap",
-				render.Na("div.copinion", "data-opinion", votation.OpinionBlank.String()),
+				render.Na("div.copinion", "data-opinion", common.OpinionBlank.String()),
 				"Blanc"),
 		),
 		render.N("tr",
 			render.N("td.r.wnowrap", v.Null),
 			render.N("td.r.wnowrap", percent(v.Null, v.Register), "%"),
 			render.N("td.wnowrap",
-				render.Na("div.copinion", "data-opinion", votation.OpinionNull.String()),
+				render.Na("div.copinion", "data-opinion", common.OpinionNull.String()),
 				"Nul"),
 		),
 		render.N("tr",
 			render.N("td.r.wnowrap", v.Abstention),
 			render.N("td.r.wnowrap", percent(v.Abstention, v.Register), "%"),
 			render.N("td.wnowrap",
-				render.Na("div.copinion", "data-opinion", votation.OpinionAbstention.String()),
+				render.Na("div.copinion", "data-opinion", common.OpinionAbstention.String()),
 				"Abstention"),
 		),
 		render.N("tr",
