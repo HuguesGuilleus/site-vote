@@ -130,8 +130,7 @@ func renderZoneMain(z *common.Zone, subSuffix string) render.Node {
 				render.Na("h1", "id", v.ID).N(v.Name),
 				render.IfElse(len(v.SubSummary) != 0, func() render.Node {
 					return render.N("div.summary",
-						render.N("a.summaryItem", "*"),
-						renderBar(&v.Summary),
+						render.N("a.summaryItem", "*"), renderBar(&v.Summary),
 						render.S(v.SubSummary, "", func(s common.SubSummary) render.Node {
 							return render.N("",
 								render.Na("a.summaryItem", "href", s.Group+subSuffix).N(s.Group),

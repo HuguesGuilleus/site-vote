@@ -6,6 +6,7 @@ import (
 	"lfi/data-vote/render"
 	"lfi/data-vote/votation"
 	"lfi/data-vote/votation/legislative2024"
+	"lfi/data-vote/votation/presidentielle2017"
 	"lfi/data-vote/votation/ue2024"
 	"sniffle/tool"
 )
@@ -23,6 +24,7 @@ func main() {
 	events := common.Merge(
 		tr(legislative2024.Fetch(t)),
 		tr(ue2024.Parse(t)),
+		presidentielle2017.Fetch(t),
 	)
 
 	t.Info("render ...")
