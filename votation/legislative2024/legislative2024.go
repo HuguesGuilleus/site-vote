@@ -1,145 +1,83 @@
 package legislative2024
 
 import (
-	"encoding/csv"
-	"fmt"
-	"lfi/data-vote/votation"
+	"lfi/data-vote/common"
+	"lfi/data-vote/common/csvtool"
 	"sniffle/tool"
-	"sniffle/tool/fetch"
-	"strconv"
-	"strings"
 )
 
-func Fetch(t *tool.Tool) []*votation.Station {
-	body := t.Fetch(fetch.URL(url)).Body
-	defer body.Close()
-
-	r := csv.NewReader(body)
-	r.Comma = ';'
-	lines, err := r.ReadAll()
-	if err != nil {
-		t.Error("csv.parse", "err", err.Error())
-		return nil
-	} else if strings.Join(lines[0], ";") != header {
-		t.Error("wrong header")
-		return nil
+func Fetch(t *tool.Tool) []*common.Event {
+	lines := csvtool.Fetch(t, url, header)
+	events := make([]*common.Event, 0, len(lines))
+	for _, line := range lines {
+		events = append(events, parseEvent(line))
 	}
-
-	stations := make([]*votation.Station, 0, len(lines[1:]))
-	for i, line := range lines[1:] {
-		s, err := parseLine(line)
-		if err != nil {
-			t.Warn("parse line", "err", err.Error(), "line", i+2)
-			continue
-		}
-		stations = append(stations, s)
-	}
-
-	return stations
+	return events
 }
 
-func parseLine(line []string) (_ *votation.Station, err error) {
-	r := votation.VotationResult{}
-	r.Register = parseUint(&err, line[5])
-	r.Abstention = parseUint(&err, line[8])
-	r.Blank = parseUint(&err, line[13])
-	r.Null = parseUint(&err, line[16])
-	departement := votation.DepartementName2Const[line[1]]
-	if err != nil {
-		return nil, err
-	} else if departement == 0 {
-		return nil, fmt.Errorf("Unknow departement %q", line[1])
-	}
-
-	err = parseResults(&r, line[19:])
-	if err != nil {
-		return nil, err
-	}
-
-	return &votation.Station{
-		Departement: departement,
+func parseEvent(line []string) *common.Event {
+	return &common.Event{
+		Departement: common.DepartementName2Const[line[1]],
 		City:        line[3],
-		CodeStation: line[4],
-		Votation: []votation.Votation{
-			{Name: voteName, Date: voteDate, Code: voteCode, VotationResult: r},
-		},
-	}, nil
+		StationID:   line[4],
+
+		VoteID:   voteID,
+		VoteName: voteName,
+
+		Register:   csvtool.ParseUint(line[5]),
+		Abstention: csvtool.ParseUint(line[8]),
+		Blank:      csvtool.ParseUint(line[13]),
+		Null:       csvtool.ParseUint(line[16]),
+
+		Option: parseOption(line[19:], make([]common.Option, 0, 19)),
+	}
 }
 
-func parseResults(r *votation.VotationResult, line []string) (err error) {
-	if len(line) == 0 {
-		return nil
-	} else if len(line) < 9 {
-		return fmt.Errorf("Expected at least 9 element, get only %d", len(line))
-	} else if line[0] == "" {
-		return nil
+func parseOption(line []string, options []common.Option) []common.Option {
+	if len(line) == 0 || line[0] == "" {
+		return options
 	}
 
-	r.Result = append(r.Result, votation.Result{
-		Option: &votation.Option{
-			Position: parseUint(&err, line[0]),
-			Party:    line[1],
-			Opinion:  parseOpinion(&err, line[1]),
-			Name:     line[3] + " " + line[2],
-			Gender:   parseGender(&err, line[4]),
-		},
-		Result: parseUint(&err, line[5]),
+	options = append(options, common.Option{
+		Result:   csvtool.ParseUint(line[5]),
+		Position: uint(len(options)) + 1,
+		Party:    line[1],
+		Opinion:  parseOpinion(line[1]),
+		Name:     line[2] + " " + line[3],
+		Gender:   parseGender(line[4]),
 	})
-	if err != nil {
-		return err
-	}
 
-	return parseResults(r, line[9:])
+	return parseOption(line[9:], options)
 }
 
-func parseUint(perr *error, s string) uint {
-	if *perr != nil {
-		return 0
-	}
-	u, err := strconv.ParseUint(s, 10, 30)
-	if err != nil {
-		*perr = err
-		return 0
-	}
-	return uint(u)
-}
-
-func parseOpinion(perr *error, s string) votation.Opinion {
-	if *perr != nil {
-		return 0
-	}
+func parseOpinion(s string) common.Opinion {
 	// Source: https://www.vie-publique.fr/en-bref/285049-legislatives-2022-une-circulaire-dattribution-des-nuances-politiques
 	// And a lot of empirism
 	switch s {
 	case "REG", "DIV":
-		return votation.OpinionOther
+		return common.OpinionOther
 	case "DXG", "EXG":
-		return votation.OpinionFarLeft
+		return common.OpinionFarLeft
 	case "COM", "FI", "ECO", "UG", "VEC":
-		return votation.OpinionLeft
+		return common.OpinionLeft
 	case "SOC", "RDG", "DVC", "DVG":
-		return votation.OpinionCenter
+		return common.OpinionCenter
 	case "ENS", "LR", "UDI", "DVD", "DSV", "HOR":
-		return votation.OpinionRight
+		return common.OpinionRight
 	case "REC", "RN", "DXD", "EXD", "UXD":
-		return votation.OpinionFarRight
+		return common.OpinionFarRight
 	default:
-		*perr = fmt.Errorf("Unknown opinion %q", s)
-		return 0
+		panic("Unknwo opinion: " + s)
 	}
 }
 
-func parseGender(perr *error, s string) votation.Gender {
-	if *perr != nil {
-		return 0
-	}
+func parseGender(s string) common.Gender {
 	switch s {
 	case "MASCULIN":
-		return votation.GenderMan
+		return common.GenderMan
 	case "FEMININ":
-		return votation.GenderWoman
+		return common.GenderWoman
 	default:
-		*perr = fmt.Errorf("Sex: expected 'MASCULIN' or 'FEMININ', get %q", s)
-		return 0
+		panic("Unknown gender: " + s)
 	}
 }
