@@ -113,7 +113,7 @@ func renderZoneMain(z *common.Zone, subSuffix string) render.Node {
 	return render.N("main",
 		render.N("div.summary", render.S(z.Vote, "", func(v common.Vote) render.Node {
 			return render.N("",
-				render.Na("a.summaryItem", "href", "#"+v.ID).N(v.ID),
+				render.Na("a", "href", "#"+v.ID).N(v.ID),
 				renderBar(&v.Summary),
 			)
 		})),
@@ -129,10 +129,10 @@ func renderZoneMain(z *common.Zone, subSuffix string) render.Node {
 				render.Na("h1", "id", v.ID).N(v.Name),
 				render.IfElse(len(v.SubSummary) != 0, func() render.Node {
 					return render.N("div.summary",
-						render.N("a.summaryItem", "*"), renderBar(&v.Summary),
+						render.N("a.r", "*"), renderBar(&v.Summary),
 						render.S(v.SubSummary, "", func(s common.SubSummary) render.Node {
 							return render.N("",
-								render.Na("a.summaryItem", "href", s.Group+subSuffix).N(s.Group),
+								render.Na("a.r", "href", s.Group+subSuffix).N(s.Group),
 								renderBar(&s.Summary),
 							)
 						}),

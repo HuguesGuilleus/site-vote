@@ -64,6 +64,10 @@ div.summary {
 	display: grid;
 	grid-template-columns: auto 1fr;
 	gap: 0 1ex;
+
+	.r {
+		text-align: right;
+	}
 }
 
 ul.sub {

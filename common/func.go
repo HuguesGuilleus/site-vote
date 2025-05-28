@@ -3,7 +3,6 @@ package common
 import (
 	"cmp"
 	"iter"
-	"maps"
 	"slices"
 	"sniffle/tool"
 	"sync"
@@ -33,6 +32,7 @@ func Call(t *tool.Tool, votations ...func(t *tool.Tool) []*Event) []*Event {
 		return cmp.Or(
 			cmp.Compare(a.Departement, b.Departement),
 			cmp.Compare(a.City, b.City),
+			cmp.Compare(len(a.StationID), len(b.StationID)),
 			cmp.Compare(a.StationID, b.StationID),
 			cmp.Compare(b.VoteID, a.VoteID),
 		)
@@ -131,12 +131,12 @@ func by(
 	for i, e := range events[1:] {
 		if notSame(events[0], e) {
 			if z := newZone(events[0]); z != nil {
-				z.mergeOneZone(events[:i+2], getGroup)
+				z.mergeOneZone(events[:i+1], getGroup)
 				if !yield(z) {
 					return
 				}
 			}
-			by(yield, events[i+2:], getGroup, notSame, newZone)
+			by(yield, events[i+1:], getGroup, notSame, newZone)
 			return
 		}
 	}
@@ -148,7 +148,6 @@ func by(
 }
 
 func (z *Zone) mergeOneZone(events []*Event, getGroup func(*Event) string) {
-	msub := make(map[string]struct{})
 	mvotes := make(map[string]*Vote)
 
 	for _, e := range events {
@@ -166,21 +165,24 @@ func (z *Zone) mergeOneZone(events []*Event, getGroup func(*Event) string) {
 
 		sum := e.Sum()
 		v.Summary.Add(sum)
-		if getGroup == nil {
-			continue
-		}
-		group := getGroup(e)
-		msub[group] = struct{}{}
-		if i := len(v.SubSummary) - 1; i > 0 && v.SubSummary[i].Group == group {
-			v.SubSummary[i].Summary.Add(sum)
-		} else {
-			v.SubSummary = append(v.SubSummary, SubSummary{group, sum})
+
+		if getGroup != nil {
+			group := getGroup(e)
+			if i := len(v.SubSummary) - 1; i == -1 || v.SubSummary[i].Group != group {
+				v.SubSummary = append(v.SubSummary, SubSummary{group, sum})
+			} else {
+				v.SubSummary[i].Summary.Add(sum)
+			}
 		}
 	}
 
-	if len(msub) > 0 {
-		z.Sub = slices.AppendSeq(make([]string, 0, len(msub)), maps.Keys(msub))
-		slices.Sort(z.Sub)
+	if getGroup != nil {
+		z.Sub = make([]string, 0)
+		for _, e := range events {
+			if g := getGroup(e); len(z.Sub) == 0 || z.Sub[len(z.Sub)-1] != g {
+				z.Sub = append(z.Sub, g)
+			}
+		}
 	}
 
 	z.Vote = make([]Vote, 0, len(mvotes))
@@ -194,7 +196,7 @@ func (z *Zone) mergeOneZone(events []*Event, getGroup func(*Event) string) {
 
 // Merge options inside out.
 func mergeOption(out, add []Option) []Option {
-	if out == nil || len(out)+len(add) > 200 {
+	if out == nil || len(out)+len(add) > 50 {
 		return nil
 	}
 
