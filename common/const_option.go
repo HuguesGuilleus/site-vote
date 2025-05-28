@@ -15,6 +15,9 @@ func (c ConstOption) Clone() []Option {
 func ConstOptions(args ...string) (options ConstOption) {
 	options = make([]Option, 0, len(args))
 	for i, a := range args {
+		if a == "" {
+			continue
+		}
 		s := strings.Split(a, "\t")
 		opinion := Opinion(0)
 		switch s[0] {

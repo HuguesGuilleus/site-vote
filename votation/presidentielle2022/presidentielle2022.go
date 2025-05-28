@@ -13,7 +13,7 @@ const (
 	header = `Code du département;Libellé du département;Code de la circonscription;Libellé de la circonscription;Code de la commune;Libellé de la commune;Code du b.vote;Inscrits;Abstentions;% Abs/Ins;Votants;% Vot/Ins;Blancs;% Blancs/Ins;% Blancs/Vot;Nuls;% Nuls/Ins;% Nuls/Vot;Exprimés;% Exp/Ins;% Exp/Vot;N°Panneau;Sexe;Nom;Prénom;Voix;% Voix/Ins;% Voix/Exp`
 
 	voteID   = "2022_03_03_P"
-	voteName = "Présidentielle 2022"
+	voteName = "2022-03-03 Présidentielle"
 )
 
 func Fetch(t *tool.Tool) []*common.Event {

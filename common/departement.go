@@ -355,6 +355,14 @@ var departementConst2Code = [256]string{
 	DepartementNouvelleCalédonie:  "988",
 }
 
+var DepartementCode2Const = func() (m map[string]Departement) {
+	m = make(map[string]Departement, len(departementConst2Code))
+	for d, code := range departementConst2Code {
+		m[code] = Departement(d)
+	}
+	return
+}()
+
 var DepartementName2Const = map[string]Departement{
 	"Ain":                     1,
 	"Aisne":                   2,

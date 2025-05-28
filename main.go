@@ -5,6 +5,7 @@ import (
 	"lfi/data-vote/common"
 	"lfi/data-vote/render"
 	"lfi/data-vote/votation/legislative2024"
+	"lfi/data-vote/votation/presidentielle2012"
 	"lfi/data-vote/votation/presidentielle2017"
 	"lfi/data-vote/votation/presidentielle2022"
 	"lfi/data-vote/votation/ue2024"
@@ -23,9 +24,12 @@ func main() {
 	t.Info("fetch ...")
 	events := common.Call(t,
 		legislative2024.Fetch,
-		ue2024.Fetch,
-		presidentielle2017.Fetch,
+
 		presidentielle2022.Fetch,
+		presidentielle2017.Fetch,
+		presidentielle2012.Fetch,
+
+		ue2024.Fetch,
 	)
 
 	t.Info("render ...")
@@ -50,7 +54,7 @@ func skip(d common.Departement, city string) bool {
 		return true
 	}
 	switch city {
-	case "", "Troyes", "Saint-Julien-les-Villas":
+	case "", "La Chapelle-Saint-Luc", "Saint-Julien-les-Villas", "Sainte-Savine", "Troyes":
 		return false
 	default:
 		return true

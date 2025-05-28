@@ -45,13 +45,16 @@ func FetchWeirdCSV(t *tool.Tool, url, header string) (lines [][]string) {
 	}
 
 	lineData := strings.Split(string(data), "\r\n")
-	if lineData[0] != header {
-		t.Error("wrong header")
-		return nil
+	if header != "" {
+		if lineData[0] != header {
+			t.Error("wrong header")
+			return nil
+		}
+		lineData = lineData[1:]
 	}
 
-	lines = make([][]string, len(lineData)-1)
-	for i, line := range lineData[1:] {
+	lines = make([][]string, len(lineData))
+	for i, line := range lineData {
 		lines[i] = strings.Split(line, ";")
 	}
 

@@ -5,8 +5,10 @@ import (
 	"time"
 )
 
-const voteName = "Européenne 2024"
-const voteID = "2024_06_09_UE"
+const (
+	voteID   = "2024_06_09_UE"
+	voteName = "2024-06-09 Européenne"
+)
 
 var voteDate = time.Date(2024, time.June, 9, 0, 0, 0, 0, time.UTC)
 

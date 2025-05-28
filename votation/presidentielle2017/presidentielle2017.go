@@ -17,7 +17,7 @@ const header = `Code du département;Libellé du département;Code de la circons
 
 const (
 	voteID   = "2017_04_23_P"
-	voteName = "23 avril 2017 Présidentielle"
+	voteName = "2017-04-23 Présidentielle"
 )
 
 func Fetch(t *tool.Tool) (events []*common.Event) {
