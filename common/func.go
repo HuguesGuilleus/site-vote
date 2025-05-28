@@ -200,23 +200,19 @@ func mergeOption(out, add []Option) []Option {
 		return nil
 	}
 
-	out = append(out, add...)
-	if len(out) <= 1 {
-		return out
-	}
-	slices.SortFunc(out, optionCompare)
-
-	w := 0
-	for _, o := range out[1:] {
-		if optionCompare(out[w], o) == 0 {
-			out[w].Result += o.Result
-		} else {
-			w++
-			out[w] = o
+	for w := 0; len(add) != 0 && w < len(out); w++ {
+		switch optionCompare(out[w], add[0]) {
+		case 0:
+			out[w].Result += add[0].Result
+			add = add[1:]
+		case 1:
+			out = slices.Insert(out, w, add[0])
+			add = add[1:]
+		case -1: // do nothing
 		}
 	}
 
-	return out[:w+1]
+	return append(out, add...)
 }
 
 // Compare two option with their opinion name and position
