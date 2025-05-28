@@ -34,7 +34,6 @@ func Call(t *tool.Tool, votations ...func(t *tool.Tool) []*Event) []*Event {
 			cmp.Compare(a.City, b.City),
 			cmp.Compare(len(a.StationID), len(b.StationID)),
 			cmp.Compare(a.StationID, b.StationID),
-			cmp.Compare(b.VoteID, a.VoteID),
 		)
 	})
 
@@ -42,9 +41,10 @@ func Call(t *tool.Tool, votations ...func(t *tool.Tool) []*Event) []*Event {
 }
 
 func AllFrance(events []*Event) *Zone {
-	z := new(Zone)
-	z.mergeOneZone(events, func(e *Event) string { return e.Departement.Code() })
-	return z
+	return &Zone{
+		Vote: mergeVote(events, nil),
+		Sub:  mergeSub(events, func(e *Event) string { return e.Departement.Code() }),
+	}
 }
 
 // A filter function to check if the future zone is necessary.
@@ -52,104 +52,95 @@ type Skip = func(Departement, string) bool
 
 func ByDepartement(events []*Event, skip Skip) iter.Seq[*Zone] {
 	return func(yield func(*Zone) bool) {
-		by(yield, events,
-			func(e *Event) string { return e.City },
-			func(a, b *Event) bool {
+		zoneEvents := []*Event(nil)
+		for len(events) != 0 {
+			zoneEvents, events = splitEvent(events, func(a, b *Event) bool {
 				return a.Departement != b.Departement
-			},
-			func(e *Event) *Zone {
-				if skip(e.Departement, "") {
-					return nil
-				}
-				return &Zone{
-					Departement: e.Departement,
-				}
-			},
-		)
+			})
+			e0 := zoneEvents[0]
+			if skip(e0.Departement, "") {
+				continue
+			}
+			getGroup := func(e *Event) string { return e.City }
+			z := &Zone{
+				Departement: e0.Departement,
+				City:        e0.City,
+				Vote:        mergeVote(zoneEvents, nil),
+				Sub:         mergeSub(zoneEvents, getGroup),
+			}
+			if !yield(z) {
+				return
+			}
+		}
 	}
 }
+
 func ByCity(events []*Event, skip Skip) iter.Seq[*Zone] {
 	return func(yield func(*Zone) bool) {
-		by(yield, events,
-			func(e *Event) string { return e.StationID },
-			func(a, b *Event) bool {
+		zoneEvents := []*Event(nil)
+		for len(events) != 0 {
+			zoneEvents, events = splitEvent(events, func(a, b *Event) bool {
 				return a.Departement != b.Departement || a.City != b.City
-			},
-			func(e *Event) *Zone {
-				if skip(e.Departement, e.City) {
-					return nil
-				}
-				return &Zone{
-					Departement: e.Departement,
-					City:        e.City,
-				}
-			},
-		)
+			})
+			e0 := zoneEvents[0]
+			if skip(e0.Departement, e0.City) {
+				continue
+			}
+			getGroup := func(e *Event) string { return e.StationID }
+			z := &Zone{
+				Departement: e0.Departement,
+				City:        e0.City,
+				Vote:        mergeVote(zoneEvents, getGroup),
+				Sub:         mergeSub(zoneEvents, getGroup),
+			}
+			if !yield(z) {
+				return
+			}
+		}
 	}
 }
 func ByStation(events []*Event, skip Skip) iter.Seq[*Zone] {
 	return func(yield func(*Zone) bool) {
-		by(yield, events,
-			nil,
-			func(a, b *Event) bool {
-				return a.Departement != b.Departement ||
-					a.City != b.City ||
-					a.StationID != b.StationID
-			},
-			func(e *Event) *Zone {
-				if skip(e.Departement, e.City) {
-					return nil
-				}
-				return &Zone{
-					Departement: e.Departement,
-					City:        e.City,
-					StationID:   e.StationID,
-				}
-			},
-		)
+		zoneEvents := []*Event(nil)
+		for len(events) != 0 {
+			zoneEvents, events = splitEvent(events, func(a, b *Event) bool {
+				return a.Departement != b.Departement || a.City != b.City || a.StationID != b.StationID
+			})
+			e0 := zoneEvents[0]
+			if skip(e0.Departement, e0.City) {
+				continue
+			}
+			z := &Zone{
+				Departement: e0.Departement,
+				City:        e0.City,
+				StationID:   e0.StationID,
+				Vote:        mergeVote(zoneEvents, nil),
+			}
+			if !yield(z) {
+				return
+			}
+		}
 	}
 }
 
-func by(
-	yield func(*Zone) bool,
+func splitEvent(
 	events []*Event,
-	getGroup func(*Event) string,
-	notSame func(a, b *Event) bool,
-	newZone func(*Event) *Zone,
-) {
-	switch len(events) {
-	case 0:
-		return
-	case 1:
-		if z := newZone(events[0]); z != nil {
-			z.mergeOneZone(events, getGroup)
-			yield(z)
-		}
-		return
+	notSame func(a, b *Event) bool) ([]*Event, []*Event) {
+	if len(events) == 0 {
+		return events, nil
 	}
 
 	for i, e := range events[1:] {
 		if notSame(events[0], e) {
-			if z := newZone(events[0]); z != nil {
-				z.mergeOneZone(events[:i+1], getGroup)
-				if !yield(z) {
-					return
-				}
-			}
-			by(yield, events[i+1:], getGroup, notSame, newZone)
-			return
+			return events[:i+1], events[i+1:]
 		}
 	}
 
-	if z := newZone(events[0]); z != nil {
-		z.mergeOneZone(events, getGroup)
-		yield(z)
-	}
+	return events, nil
 }
 
-func (z *Zone) mergeOneZone(events []*Event, getGroup func(*Event) string) {
+func mergeVote(events []*Event, getGroup func(*Event) string) (votes []Vote) {
 	mvotes := make(map[string]*Vote)
-
 	for _, e := range events {
 		v := mvotes[e.VoteID]
 		if v == nil {
@@ -176,22 +167,22 @@ func (z *Zone) mergeOneZone(events []*Event, getGroup func(*Event) string) {
 		}
 	}
 
-	if getGroup != nil {
-		z.Sub = make([]string, 0)
-		for _, e := range events {
-			if g := getGroup(e); len(z.Sub) == 0 || z.Sub[len(z.Sub)-1] != g {
-				z.Sub = append(z.Sub, g)
-			}
+	votes = make([]Vote, 0, len(mvotes))
+	for _, v := range mvotes {
+		votes = append(votes, *v)
+	}
+	slices.SortFunc(votes, func(a, b Vote) int { return cmp.Compare(b.ID, a.ID) })
+	return
+}
+
+func mergeSub(events []*Event, getGroup func(*Event) string) (sub []string) {
+	sub = make([]string, 0)
+	for _, e := range events {
+		if g := getGroup(e); len(sub) == 0 || sub[len(sub)-1] != g {
+			sub = append(sub, g)
 		}
 	}
-
-	z.Vote = make([]Vote, 0, len(mvotes))
-	for _, v := range mvotes {
-		z.Vote = append(z.Vote, *v)
-	}
-	slices.SortFunc(z.Vote, func(a, b Vote) int {
-		return cmp.Compare(b.ID, a.ID)
-	})
+	return
 }
 
 // Merge options inside out.
