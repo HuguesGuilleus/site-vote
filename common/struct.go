@@ -4,6 +4,7 @@ type Event struct {
 	Departement Departement
 	City        string
 	StationID   string
+	District    string
 
 	VoteID   string
 	VoteName string

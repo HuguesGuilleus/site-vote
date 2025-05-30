@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"lfi/data-vote/common"
 	"lfi/data-vote/render"
+	"lfi/data-vote/votation/legislative2022"
 	"lfi/data-vote/votation/legislative2024"
 	"lfi/data-vote/votation/presidentielle2012"
 	"lfi/data-vote/votation/presidentielle2017"
@@ -24,6 +25,7 @@ func main() {
 	t.Info("fetch ...")
 	events := common.Call(t,
 		legislative2024.Fetch,
+		legislative2022.Fetch,
 
 		presidentielle2022.Fetch,
 		presidentielle2017.Fetch,
