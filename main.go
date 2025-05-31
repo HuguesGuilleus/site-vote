@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"lfi/data-vote/common"
 	"lfi/data-vote/render"
+	"lfi/data-vote/votation/legislative2012"
 	"lfi/data-vote/votation/legislative2017"
 	"lfi/data-vote/votation/legislative2022"
 	"lfi/data-vote/votation/legislative2024"
@@ -28,6 +29,7 @@ func main() {
 		legislative2024.Fetch,
 		legislative2022.Fetch,
 		legislative2017.Fetch,
+		legislative2012.Fetch,
 
 		presidentielle2022.Fetch,
 		presidentielle2017.Fetch,
