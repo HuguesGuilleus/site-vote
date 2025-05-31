@@ -360,6 +360,24 @@ var DepartementCode2Const = func() (m map[string]Departement) {
 	for d, code := range departementConst2Code {
 		m[code] = Departement(d)
 	}
+	m["01"] = 1
+	m["02"] = 2
+	m["03"] = 3
+	m["04"] = 4
+	m["05"] = 5
+	m["06"] = 6
+	m["07"] = 7
+	m["08"] = 8
+	m["09"] = 9
+	m["ZA"] = DepartementGuadeloupe
+	m["ZB"] = DepartementMartinique
+	m["ZC"] = DepartementGuyane
+	m["ZD"] = DepartementLaRéunion
+	m["ZM"] = DepartementMayotte
+	m["ZN"] = DepartementNouvelleCalédonie
+	m["ZP"] = DepartementNouvelleCalédonie
+	m["ZS"] = DepartementSaintPierreEtMiquelon
+	m["ZW"] = DepartementFrançaisÉtablisHorsDeFrance
 	return
 }()
 
