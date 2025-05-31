@@ -22,7 +22,7 @@ func RenderFrance(t *tool.Tool, z *common.Zone) {
 					render.N("div.headerBlock.main", "France"),
 				),
 			),
-			renderZoneMain(z, "/index.html"),
+			renderZoneMain(z),
 			componentFooter,
 		),
 	)))
@@ -48,7 +48,34 @@ func RenderDepartement(t *tool.Tool, z *common.Zone) {
 					render.N("div.headerBlock.main", "Département: ", z.Departement),
 				),
 			),
-			renderZoneMain(z, "/index.html"),
+			renderZoneMain(z),
+			componentFooter,
+		),
+	)))
+}
+
+func RenderLegislativeDisctrict(t *tool.Tool, z *common.Zone) {
+	p := z.Departement.Code() + "/" + z.District + ".html"
+	t.WriteFile(p, render.Merge(render.Na("html", "lang", "fr").N(
+		render.N("head",
+			render.H(`<meta charset=utf-8>`),
+			render.H(`<meta name=viewport content="width=device-width,initial-scale=1">`),
+			render.H(`<link rel=stylesheet href=../style.css>`),
+			render.H(`<link rel=icon href=../favicon.ico>`),
+			render.N("title", "Circonscrption ", z.District, " de ", z.Departement),
+		),
+		render.N("body",
+			componentNav,
+			render.N("header",
+				render.N("div.headerRow",
+					render.Na("a.headerBlock", "href", "../index.html").N("France"),
+					render.Na("a.headerBlock", "href", "./index.html").N(z.Departement),
+				),
+				render.N("div.headerRow",
+					render.N("div.headerBlock.main", "Circonscription: ", z.District),
+				),
+			),
+			renderZoneMain(z),
 			componentFooter,
 		),
 	)))
@@ -75,7 +102,7 @@ func RenderCity(t *tool.Tool, z *common.Zone) {
 					render.N("div.headerBlock.main", "Ville: ", z.City),
 				),
 			),
-			renderZoneMain(z, ".html"),
+			renderZoneMain(z),
 			componentFooter,
 		),
 	)))
@@ -103,13 +130,13 @@ func RenderStation(t *tool.Tool, z *common.Zone) {
 					render.N("div.headerBlock.main", "Bureau: ", z.StationID),
 				),
 			),
-			renderZoneMain(z, ""),
+			renderZoneMain(z),
 			componentFooter,
 		),
 	)))
 }
 
-func renderZoneMain(z *common.Zone, subSuffix string) render.Node {
+func renderZoneMain(z *common.Zone) render.Node {
 	return render.N("main",
 		render.N("div.summary", render.S(z.Vote, "", func(v common.Vote) render.Node {
 			return render.N("",
@@ -118,9 +145,19 @@ func renderZoneMain(z *common.Zone, subSuffix string) render.Node {
 			)
 		})),
 
+		render.If(len(z.Parents) != 0, func() render.Node {
+			return render.N("ul.sub", render.S(z.Parents, "", func(p string) render.Node {
+				return render.N("li", render.Na("a", "href", "../"+p+".html").N(p))
+			}))
+		}),
+		render.If(len(z.Same) != 0, func() render.Node {
+			return render.N("ul.sub", render.S(z.Same, "", func(sub string) render.Node {
+				return render.N("li", render.Na("a", "href", sub+".html").N(sub))
+			}))
+		}),
 		render.If(len(z.Sub) != 0, func() render.Node {
 			return render.N("ul.sub", render.S(z.Sub, "", func(sub string) render.Node {
-				return render.N("li", render.Na("a", "href", sub+subSuffix).N(sub))
+				return render.N("li", render.Na("a", "href", sub+"/index.html").N(sub))
 			}))
 		}),
 
@@ -132,7 +169,7 @@ func renderZoneMain(z *common.Zone, subSuffix string) render.Node {
 						render.N("a.r", "*"), renderBar(&v.Summary),
 						render.S(v.SubSummary, "", func(s common.SubSummary) render.Node {
 							return render.N("",
-								render.Na("a.r", "href", s.Group+subSuffix).N(s.Group),
+								render.Na("a.r", "href", s.Group+".html").N(s.Group),
 								renderBar(&s.Summary),
 							)
 						}),

@@ -5,6 +5,7 @@ import (
 	"iter"
 	"slices"
 	"sniffle/tool"
+	"strings"
 	"sync"
 )
 
@@ -64,9 +65,48 @@ func ByDepartement(events []*Event, skip Skip) iter.Seq[*Zone] {
 			getGroup := func(e *Event) string { return e.City }
 			z := &Zone{
 				Departement: e0.Departement,
-				City:        e0.City,
 				Vote:        mergeVote(zoneEvents, nil),
 				Sub:         mergeSub(zoneEvents, getGroup),
+				Same:        mergeDistrict(zoneEvents),
+			}
+			if !yield(z) {
+				return
+			}
+		}
+	}
+}
+
+func ByLegislativeDisctrict(allEvents []*Event, skip Skip) iter.Seq[*Zone] {
+	events := make([]*Event, 0, len(allEvents))
+	for _, e := range allEvents {
+		if !strings.HasSuffix(e.VoteID, "_L") || e.District == "" {
+			continue
+		}
+		events = append(events, e)
+	}
+	slices.SortFunc(events, func(a, b *Event) int {
+		return cmp.Or(
+			cmp.Compare(a.Departement, b.Departement),
+			cmp.Compare(a.District, b.District),
+			cmp.Compare(a.City, b.City),
+		)
+	})
+
+	return func(yield func(*Zone) bool) {
+		zoneEvents := []*Event(nil)
+		for len(events) != 0 {
+			zoneEvents, events = splitEvent(events, func(a, b *Event) bool {
+				return a.Departement != b.Departement || a.District != b.District
+			})
+			e0 := zoneEvents[0]
+			if skip(e0.Departement, "") {
+				continue
+			}
+			z := &Zone{
+				Departement: e0.Departement,
+				District:    "C" + e0.District,
+				Vote:        mergeVote(zoneEvents, nil),
+				Sub:         mergeSub(zoneEvents, func(e *Event) string { return e.City }),
 			}
 			if !yield(z) {
 				return
@@ -90,8 +130,9 @@ func ByCity(events []*Event, skip Skip) iter.Seq[*Zone] {
 			z := &Zone{
 				Departement: e0.Departement,
 				City:        e0.City,
+				Parents:     mergeDistrict(zoneEvents),
+				Same:        mergeSub(zoneEvents, getGroup),
 				Vote:        mergeVote(zoneEvents, getGroup),
-				Sub:         mergeSub(zoneEvents, getGroup),
 			}
 			if !yield(z) {
 				return
@@ -99,6 +140,7 @@ func ByCity(events []*Event, skip Skip) iter.Seq[*Zone] {
 		}
 	}
 }
+
 func ByStation(events []*Event, skip Skip) iter.Seq[*Zone] {
 	return func(yield func(*Zone) bool) {
 		zoneEvents := []*Event(nil)
@@ -114,6 +156,7 @@ func ByStation(events []*Event, skip Skip) iter.Seq[*Zone] {
 				Departement: e0.Departement,
 				City:        e0.City,
 				StationID:   e0.StationID,
+				Parents:     mergeDistrict(zoneEvents),
 				Vote:        mergeVote(zoneEvents, nil),
 			}
 			if !yield(z) {
@@ -125,7 +168,8 @@ func ByStation(events []*Event, skip Skip) iter.Seq[*Zone] {
 
 func splitEvent(
 	events []*Event,
-	notSame func(a, b *Event) bool) ([]*Event, []*Event) {
+	notSame func(a, b *Event) bool,
+) ([]*Event, []*Event) {
 	if len(events) == 0 {
 		return events, nil
 	}
@@ -182,6 +226,22 @@ func mergeSub(events []*Event, getGroup func(*Event) string) (sub []string) {
 			sub = append(sub, g)
 		}
 	}
+	return
+}
+
+func mergeDistrict(events []*Event) (same []string) {
+	m := map[string]struct{}{}
+	for _, e := range events {
+		if e.District == "" {
+			continue
+		}
+		m[e.District] = struct{}{}
+	}
+	same = make([]string, 0, len(m))
+	for k := range m {
+		same = append(same, "C"+k)
+	}
+	slices.Sort(same)
 	return
 }
 

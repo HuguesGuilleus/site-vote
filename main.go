@@ -45,6 +45,9 @@ func main() {
 	for z := range common.ByDepartement(events, skip) {
 		render.RenderDepartement(t, z)
 	}
+	for z := range common.ByLegislativeDisctrict(events, skip) {
+		render.RenderLegislativeDisctrict(t, z)
+	}
 	for z := range common.ByCity(events, skip) {
 		render.RenderCity(t, z)
 	}

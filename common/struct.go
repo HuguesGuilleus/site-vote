@@ -22,6 +22,13 @@ type Zone struct {
 	Departement Departement
 	City        string
 	StationID   string
+	District    string
+
+	Parents []string
+
+	// Element with the same level.
+	// Example: with Departement Zone, a legislative district.
+	Same []string
 
 	Sub []string
 
