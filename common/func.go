@@ -187,7 +187,7 @@ func mergeSub(events []*Event, getGroup func(*Event) string) (sub []string) {
 
 // Merge options inside out.
 func mergeOption(out, add []Option) []Option {
-	if out == nil || len(out)+len(add) > 50 {
+	if out == nil || len(out)+len(add) > 100 {
 		return nil
 	}
 

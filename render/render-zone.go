@@ -171,6 +171,21 @@ func renderVoteTable(v *common.Vote) render.Node {
 				),
 			)
 		}),
+		render.If(len(v.Option) == 0, func() render.Node {
+			return render.N("", render.S2(v.Summary.Result[:common.OpinionBlank], "", func(_o int, voices uint) render.Node {
+				if voices == 0 {
+					return render.Z
+				}
+				o := common.Opinion(_o)
+				return render.N("tr",
+					render.N("td.r.wnowrap", voices),
+					render.N("td.r.wnowrap", percent(voices, v.Register), "%"),
+					render.N("td.wnowrap",
+						render.Na("div.copinion", "data-opinion", o.String()),
+						"["+o.String()+"]"),
+				)
+			}))
+		}),
 		render.N("tr",
 			render.N("td.r.wnowrap", v.Blank),
 			render.N("td.r.wnowrap", percent(v.Blank, v.Register), "%"),
