@@ -36,6 +36,14 @@ func FetchCSV(t *tool.Tool, url, header string) [][]string {
 }
 
 func FetchWeirdCSV(t *tool.Tool, url, header string) (lines [][]string) {
+	return fetchWeirdLines(t, url, header, ";")
+}
+
+func FetchWeirdTab(t *tool.Tool, url, header string) (lines [][]string) {
+	return fetchWeirdLines(t, url, header, "\t")
+}
+
+func fetchWeirdLines(t *tool.Tool, url, header, sep string) (lines [][]string) {
 	r := t.Fetch(fetch.URL(url))
 	defer r.Body.Close()
 	data, err := io.ReadAll(charmap.ISO8859_1.NewDecoder().Reader(r.Body))
@@ -55,7 +63,7 @@ func FetchWeirdCSV(t *tool.Tool, url, header string) (lines [][]string) {
 
 	lines = make([][]string, len(lineData))
 	for i, line := range lineData {
-		lines[i] = strings.Split(line, ";")
+		lines[i] = strings.Split(line, sep)
 	}
 
 	if i := len(lines) - 1; len(lines[i]) == 1 && lines[i][0] == "" {

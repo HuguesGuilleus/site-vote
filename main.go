@@ -8,6 +8,7 @@ import (
 	"lfi/data-vote/votation/legislative2017"
 	"lfi/data-vote/votation/legislative2022"
 	"lfi/data-vote/votation/legislative2024"
+	"lfi/data-vote/votation/municipale2020"
 	"lfi/data-vote/votation/presidentielle2012"
 	"lfi/data-vote/votation/presidentielle2017"
 	"lfi/data-vote/votation/presidentielle2022"
@@ -26,6 +27,8 @@ func main() {
 
 	t.Info("fetch ...")
 	events := common.Call(t,
+		municipale2020.Fetch,
+
 		legislative2024.Fetch,
 		legislative2022.Fetch,
 		legislative2017.Fetch,

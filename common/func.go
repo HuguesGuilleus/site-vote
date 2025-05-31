@@ -2,12 +2,28 @@ package common
 
 import (
 	"cmp"
+	"fmt"
 	"iter"
 	"slices"
 	"sniffle/tool"
 	"strings"
 	"sync"
 )
+
+// Panic if an error occure in the numbers.
+func (e *Event) Check() {
+	if e.Departement == 0 {
+		panic("nit a department!")
+	}
+
+	sum := e.Abstention + e.Blank + e.Null
+	for _, o := range e.Option {
+		sum += o.Result
+	}
+	if sum != e.Register {
+		panic(fmt.Sprintf("sum:%d != register:%d", sum, e.Register))
+	}
+}
 
 func Call(t *tool.Tool, votations ...func(t *tool.Tool) []*Event) []*Event {
 	all := make([]*Event, 0)
