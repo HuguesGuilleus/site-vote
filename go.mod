@@ -7,4 +7,4 @@ require (
 	sniffle v0.0.0
 )
 
-replace sniffle => ../../sniffle/
+replace sniffle => ../sniffle/
