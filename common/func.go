@@ -13,7 +13,7 @@ import (
 // Panic if an error occure in the numbers.
 func (e *Event) Check() {
 	if e.Departement == 0 {
-		panic("nit a department!")
+		panic("not a department!")
 	}
 
 	sum := e.Abstention + e.Blank + e.Null
@@ -22,6 +22,21 @@ func (e *Event) Check() {
 	}
 	if sum != e.Register {
 		panic(fmt.Sprintf("sum:%d != register:%d", sum, e.Register))
+	}
+}
+
+func SetSplitVoting(events []*Event) {
+	type Location struct {
+		Departement Departement
+		City        string
+	}
+	citizens := make(map[Location]uint)
+	for _, e := range events {
+		citizens[Location{e.Departement, e.City}] += e.Register
+	}
+
+	for _, e := range events {
+		e.SplitVoting = citizens[Location{e.Departement, e.City}] < 1000
 	}
 }
 
@@ -300,8 +315,12 @@ func (e *Event) Sum() (sum Summary) {
 	sum.Result[OpinionAbstention] = e.Abstention
 	sum.Result[OpinionBlank] = e.Blank
 	sum.Result[OpinionNull] = e.Null
-	for _, o := range e.Option {
-		sum.Result[o.Opinion] += o.Result
+	if e.SplitVoting {
+		sum.Result[OpinionOther] = e.Register - e.Abstention - e.Blank - e.Null
+	} else {
+		for _, o := range e.Option {
+			sum.Result[o.Opinion] += o.Result
+		}
 	}
 	return
 }

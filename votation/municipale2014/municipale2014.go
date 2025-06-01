@@ -69,8 +69,12 @@ func Fetch(t *tool.Tool) []*common.Event {
 		})
 	}
 
-	events := make([]*common.Event, 0, len(locations))
-	return slices.AppendSeq(events, maps.Values(locations))
+	events := slices.AppendSeq(
+		make([]*common.Event, 0, len(locations)),
+		maps.Values(locations),
+	)
+	common.SetSplitVoting(events)
+	return events
 }
 
 func parseOpinion(party string) common.Opinion {

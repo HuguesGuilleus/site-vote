@@ -15,6 +15,8 @@ type Event struct {
 	Null       uint
 
 	Option []Option
+
+	SplitVoting bool
 }
 
 // A polling zone, all France, a department, a city or a stationID.

@@ -44,7 +44,7 @@ func Fetch(t *tool.Tool) (events []*common.Event) {
 			Option: parseOption(line[19:], make([]common.Option, 0)),
 		}
 	}
-
+	common.SetSplitVoting(events)
 	return
 }
 
