@@ -3,8 +3,9 @@ package legislative2022
 import (
 	"lfi/data-vote/common"
 	"lfi/data-vote/common/csvtool"
-	"sniffle/tool"
 	"strings"
+
+	"github.com/HuguesGuilleus/sniffle/tool"
 )
 
 const (

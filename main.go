@@ -14,7 +14,8 @@ import (
 	"lfi/data-vote/votation/presidentielle2017"
 	"lfi/data-vote/votation/presidentielle2022"
 	"lfi/data-vote/votation/ue2024"
-	"sniffle/tool"
+
+	"github.com/HuguesGuilleus/sniffle/tool"
 )
 
 //go:embed style.css

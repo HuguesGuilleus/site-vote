@@ -3,7 +3,8 @@ package render
 import (
 	"fmt"
 	"lfi/data-vote/common"
-	"sniffle/tool/render"
+
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 )
 
 var componentNav = render.Z

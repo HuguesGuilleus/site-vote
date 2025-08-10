@@ -4,10 +4,10 @@ import (
 	"io"
 	"lfi/data-vote/common"
 	"lfi/data-vote/common/csvtool"
-	"sniffle/tool"
-	"sniffle/tool/fetch"
 	"strings"
 
+	"github.com/HuguesGuilleus/sniffle/tool"
+	"github.com/HuguesGuilleus/sniffle/tool/fetch"
 	"golang.org/x/text/encoding/charmap"
 )
 

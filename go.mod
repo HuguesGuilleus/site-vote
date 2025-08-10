@@ -1,10 +1,8 @@
 module lfi/data-vote
 
-go 1.24.1
+go 1.24.3
 
 require (
-	golang.org/x/text v0.25.0
-	sniffle v0.0.0
+	github.com/HuguesGuilleus/sniffle v0.0.0-20250803094900-48a0d7ea8a97
+	golang.org/x/text v0.27.0
 )
-
-replace sniffle => ../sniffle/

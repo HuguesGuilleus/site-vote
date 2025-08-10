@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"iter"
 	"slices"
-	"sniffle/tool"
 	"strings"
 	"sync"
+
+	"github.com/HuguesGuilleus/sniffle/tool"
 )
 
 // Panic if an error occure in the numbers.

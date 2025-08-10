@@ -2,8 +2,9 @@ package render
 
 import (
 	"lfi/data-vote/common"
-	"sniffle/tool"
-	"sniffle/tool/render"
+
+	"github.com/HuguesGuilleus/sniffle/tool"
+	"github.com/HuguesGuilleus/sniffle/tool/render"
 )
 
 func RenderFrance(t *tool.Tool, z *common.Zone) {

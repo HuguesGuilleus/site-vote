@@ -3,10 +3,10 @@ package csvtool
 import (
 	"encoding/csv"
 	"io"
-	"sniffle/tool"
-	"sniffle/tool/fetch"
 	"strings"
 
+	"github.com/HuguesGuilleus/sniffle/tool"
+	"github.com/HuguesGuilleus/sniffle/tool/fetch"
 	"golang.org/x/text/encoding/charmap"
 )
 

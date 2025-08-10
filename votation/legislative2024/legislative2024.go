@@ -3,14 +3,20 @@ package legislative2024
 import (
 	"lfi/data-vote/common"
 	"lfi/data-vote/common/csvtool"
-	"sniffle/tool"
+
+	"github.com/HuguesGuilleus/sniffle/tool"
 )
 
 func Fetch(t *tool.Tool) []*common.Event {
+	// r := tool.FetchAll(t, fetch.URL(urlCirco))
+	// fmt.Println(string(r[:4096]))
+
+	csvtool.FetchCSV(t, urlCirco, headerCirco)
+
 	lines := csvtool.FetchCSV(t, url, header)
-	events := make([]*common.Event, 0, len(lines))
-	for _, line := range lines {
-		events = append(events, parseEvent(line))
+	events := make([]*common.Event, len(lines))
+	for i, line := range lines {
+		events[i] = parseEvent(line)
 	}
 	return events
 }

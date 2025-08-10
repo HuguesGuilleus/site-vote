@@ -5,8 +5,9 @@ import (
 	"lfi/data-vote/common/csvtool"
 	"maps"
 	"slices"
-	"sniffle/tool"
 	"strings"
+
+	"github.com/HuguesGuilleus/sniffle/tool"
 )
 
 const (
