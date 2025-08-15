@@ -3,8 +3,8 @@ package render
 import (
 	"bytes"
 	_ "embed"
-	"lfi/data-vote/common"
 
+	"github.com/HuguesGuilleus/site-vote/common"
 	"github.com/HuguesGuilleus/sniffle/tool"
 	"github.com/HuguesGuilleus/sniffle/tool/render"
 )

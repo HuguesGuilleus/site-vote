@@ -1,10 +1,10 @@
 package ue2024
 
 import (
-	"lfi/data-vote/common"
-	"lfi/data-vote/common/csvtool"
 	"strings"
 
+	"github.com/HuguesGuilleus/site-vote/common"
+	"github.com/HuguesGuilleus/site-vote/common/csvtool"
 	"github.com/HuguesGuilleus/sniffle/tool"
 )
 

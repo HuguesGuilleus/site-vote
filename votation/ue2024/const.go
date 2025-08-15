@@ -1,8 +1,9 @@
 package ue2024
 
 import (
-	"lfi/data-vote/common"
 	"time"
+
+	"github.com/HuguesGuilleus/site-vote/common"
 )
 
 const (

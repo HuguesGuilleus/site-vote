@@ -2,19 +2,19 @@ package main
 
 import (
 	_ "embed"
-	"lfi/data-vote/common"
-	"lfi/data-vote/render"
-	"lfi/data-vote/votation/legislative2012"
-	"lfi/data-vote/votation/legislative2017"
-	"lfi/data-vote/votation/legislative2022"
-	"lfi/data-vote/votation/legislative2024"
-	"lfi/data-vote/votation/municipale2014"
-	"lfi/data-vote/votation/municipale2020"
-	"lfi/data-vote/votation/presidentielle2012"
-	"lfi/data-vote/votation/presidentielle2017"
-	"lfi/data-vote/votation/presidentielle2022"
-	"lfi/data-vote/votation/ue2024"
 
+	"github.com/HuguesGuilleus/site-vote/common"
+	"github.com/HuguesGuilleus/site-vote/render"
+	"github.com/HuguesGuilleus/site-vote/votation/legislative2012"
+	"github.com/HuguesGuilleus/site-vote/votation/legislative2017"
+	"github.com/HuguesGuilleus/site-vote/votation/legislative2022"
+	"github.com/HuguesGuilleus/site-vote/votation/legislative2024"
+	"github.com/HuguesGuilleus/site-vote/votation/municipale2014"
+	"github.com/HuguesGuilleus/site-vote/votation/municipale2020"
+	"github.com/HuguesGuilleus/site-vote/votation/presidentielle2012"
+	"github.com/HuguesGuilleus/site-vote/votation/presidentielle2017"
+	"github.com/HuguesGuilleus/site-vote/votation/presidentielle2022"
+	"github.com/HuguesGuilleus/site-vote/votation/ue2024"
 	"github.com/HuguesGuilleus/sniffle/tool"
 )
 

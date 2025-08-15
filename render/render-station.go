@@ -2,8 +2,8 @@ package render
 
 import (
 	"fmt"
-	"lfi/data-vote/common"
 
+	"github.com/HuguesGuilleus/site-vote/common"
 	"github.com/HuguesGuilleus/sniffle/tool/render"
 )
 

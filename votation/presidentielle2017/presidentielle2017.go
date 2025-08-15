@@ -2,10 +2,10 @@ package presidentielle2017
 
 import (
 	"io"
-	"lfi/data-vote/common"
-	"lfi/data-vote/common/csvtool"
 	"strings"
 
+	"github.com/HuguesGuilleus/site-vote/common"
+	"github.com/HuguesGuilleus/site-vote/common/csvtool"
 	"github.com/HuguesGuilleus/sniffle/tool"
 	"github.com/HuguesGuilleus/sniffle/tool/fetch"
 	"golang.org/x/text/encoding/charmap"

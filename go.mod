@@ -1,4 +1,4 @@
-module lfi/data-vote
+module github.com/HuguesGuilleus/site-vote
 
 go 1.24.3
 
