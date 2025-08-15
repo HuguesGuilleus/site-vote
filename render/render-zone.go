@@ -1,11 +1,22 @@
 package render
 
 import (
+	"bytes"
+	_ "embed"
 	"lfi/data-vote/common"
 
 	"github.com/HuguesGuilleus/sniffle/tool"
 	"github.com/HuguesGuilleus/sniffle/tool/render"
 )
+
+//go:embed expressed.js
+var expressedJS []byte
+
+func init() {
+	expressedJS = bytes.ReplaceAll(expressedJS, []byte("\n"), []byte(""))
+	expressedJS = bytes.ReplaceAll(expressedJS, []byte("\t"), []byte(""))
+	expressedJS = bytes.ReplaceAll(expressedJS, []byte(" "), []byte(""))
+}
 
 func RenderFrance(t *tool.Tool, z *common.Zone) {
 	t.WriteFile("/index.html", render.Merge(render.Na("html", "lang", "fr").N(
@@ -139,6 +150,12 @@ func RenderStation(t *tool.Tool, z *common.Zone) {
 
 func renderZoneMain(z *common.Zone) render.Node {
 	return render.N("main",
+		render.Na("label", "for", "checkExpressed").N("Afficher uniquement les bulletins exprimés (raccourcis clavier: E)."),
+		render.Na("input", "id", "checkExpressed").A("type", "checkbox"),
+		render.N("br"),
+
+		render.N("script", render.H(expressedJS)),
+
 		render.N("div.summary", render.S(z.Vote, "", func(v common.Vote) render.Node {
 			return render.N("",
 				render.Na("a", "href", "#"+v.ID).N(v.ID),
@@ -185,11 +202,13 @@ func renderZoneMain(z *common.Zone) render.Node {
 }
 
 func renderVoteTable(v *common.Vote) render.Node {
+	expressed := v.Expressed()
 	return render.N("table",
 		render.N("tr",
 			render.N("th", "Voix"),
-			render.N("th", "%"),
+			render.N("th", "% Total"),
 			render.N("th", "Nuance"),
+			render.N("th", "% Exprimée"),
 			render.N("th", "Liste"),
 		),
 		render.S(v.Option, "", func(r common.Option) render.Node {
@@ -202,6 +221,7 @@ func renderVoteTable(v *common.Vote) render.Node {
 				render.N("td.wnowrap",
 					render.Na("div.copinion", "data-opinion", r.Opinion.String()),
 					r.Party),
+				render.N("td.r.wnowrap", percent(r.Result, expressed), "%"),
 				render.N("td",
 					"[", r.Position, "] ",
 					r.Name,
@@ -221,6 +241,7 @@ func renderVoteTable(v *common.Vote) render.Node {
 					render.N("td.wnowrap",
 						render.Na("div.copinion", "data-opinion", o.String()),
 						"["+o.String()+"]"),
+					render.N("td.r.wnowrap", percent(voices, expressed), "%"),
 				)
 			}))
 		}),

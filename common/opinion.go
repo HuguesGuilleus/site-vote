@@ -43,3 +43,30 @@ func (o Opinion) String() string {
 		return "_"
 	}
 }
+
+func (o Opinion) Title() string {
+	switch o {
+	case OpinionOther:
+		return "Autre"
+	case OpinionFarLeft:
+		return "Extrême gauche"
+	case OpinionLeft:
+		return "Gauche"
+	case OpinionCenter:
+		return "Centre"
+	case OpinionRight:
+		return "Droite"
+	case OpinionFarRight:
+		return "Extrême droite"
+
+	case OpinionBlank:
+		return "Blanc"
+	case OpinionNull:
+		return "Nul"
+	case OpinionAbstention:
+		return "Abstention"
+
+	default:
+		return "???"
+	}
+}

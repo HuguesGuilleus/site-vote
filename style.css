@@ -101,6 +101,10 @@ table {
 		border: grey 1px solid;
 		padding: .2ex .5ex;
 	}
+
+	tr:hover {
+		background: lightgray;
+	}
 }
 
 div.bar {
@@ -110,6 +114,15 @@ div.bar {
 
 	div.option {
 		height: 2ex;
+	}
+}
+
+body:has(#checkExpressed:checked) .bar {
+
+	[data-opinion=B],
+	[data-opinion=N],
+	[data-opinion=A] {
+		display: none;
 	}
 }
 

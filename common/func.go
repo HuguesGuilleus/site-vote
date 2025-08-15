@@ -332,3 +332,11 @@ func (s *Summary) Add(t Summary) {
 		s.Result[i] += r
 	}
 }
+
+func (v *Vote) Expressed() uint {
+	return v.Register - v.Abstention - v.Blank - v.Null
+}
+
+func (s *Summary) Expressed() uint {
+	return s.Register - s.Result[OpinionAbstention] - s.Result[OpinionBlank] - s.Result[OpinionNull]
+}

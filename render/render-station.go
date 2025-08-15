@@ -13,12 +13,17 @@ var componentFooter = render.Z
 func renderBar(sum *common.Summary) render.Node {
 	return render.N("div.bar", render.S2(sum.Result[:], "", func(_o int, voices uint) render.Node {
 		o := common.Opinion(_o)
-		if voices == 0 || o == common.OpinionAbstention {
+		if voices == 0 {
 			return render.Z
 		}
 		return render.Na("div.option",
 			"data-opinion", o.String()).
-			A("style", fmt.Sprintf("width:%d%%", percent(voices, sum.Register))).
+			A("title", fmt.Sprintf("%d%% inscrit, %d%% exprimé, %s",
+				percent(voices, sum.Register),
+				percent(voices, sum.Expressed()),
+				o.Title(),
+			)).
+			A("style", fmt.Sprintf("flex-grow:%d", voices)).
 			N()
 	}))
 }
