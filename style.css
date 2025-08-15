@@ -70,6 +70,12 @@ div.summary {
 	}
 }
 
+#search {
+	width: 100%;
+	font: inherit;
+	margin: 3ex 0 1ex;
+}
+
 ul.sub {
 	display: flex;
 	flex-wrap: wrap;

@@ -9,13 +9,13 @@ import (
 	"github.com/HuguesGuilleus/sniffle/tool/render"
 )
 
-//go:embed expressed.js
-var expressedJS []byte
+//go:embed script.js
+var scriptJS []byte
 
 func init() {
-	expressedJS = bytes.ReplaceAll(expressedJS, []byte("\n"), []byte(""))
-	expressedJS = bytes.ReplaceAll(expressedJS, []byte("\t"), []byte(""))
-	expressedJS = bytes.ReplaceAll(expressedJS, []byte(" "), []byte(""))
+	scriptJS = bytes.ReplaceAll(scriptJS, []byte("\n"), []byte(""))
+	scriptJS = bytes.ReplaceAll(scriptJS, []byte("\t"), []byte(""))
+	scriptJS = bytes.ReplaceAll(scriptJS, []byte(" "), []byte(""))
 }
 
 func RenderFrance(t *tool.Tool, z *common.Zone) {
@@ -25,7 +25,7 @@ func RenderFrance(t *tool.Tool, z *common.Zone) {
 			render.H(`<meta name=viewport content="width=device-width,initial-scale=1">`),
 			render.H(`<link rel=stylesheet href=style.css>`),
 			render.H(`<link rel=icon href=favicon.ico>`),
-			render.N("title", z.Departement.String()),
+			render.N("title", "France"),
 		),
 		render.N("body",
 			componentNav,
@@ -154,14 +154,18 @@ func renderZoneMain(z *common.Zone) render.Node {
 		render.Na("input", "id", "checkExpressed").A("type", "checkbox"),
 		render.N("br"),
 
-		render.N("script", render.H(expressedJS)),
-
 		render.N("div.summary", render.S(z.Vote, "", func(v common.Vote) render.Node {
 			return render.N("",
 				render.Na("a", "href", "#"+v.ID).N(v.ID),
 				renderBar(&v.Summary),
 			)
 		})),
+
+		render.IfS(len(z.Parents)+len(z.Same)+len(z.Sub) != 0, render.
+			Na("input", "id", "search").
+			A("type", "search").
+			A("placeholder", "Recherche dans les champs suivants:").N(),
+		),
 
 		render.If(len(z.Parents) != 0, func() render.Node {
 			return render.N("ul.sub", render.S(z.Parents, "", func(p string) render.Node {
@@ -198,6 +202,8 @@ func renderZoneMain(z *common.Zone) render.Node {
 				renderVoteTable(&v),
 			)
 		}),
+
+		render.N("script", render.H(scriptJS)),
 	)
 }
 
