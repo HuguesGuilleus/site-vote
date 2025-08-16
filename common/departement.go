@@ -117,6 +117,8 @@ const (
 	DepartementWallisEtFutuna     Departement = 186
 	DepartementPolynésieFrançaise Departement = 187
 	DepartementNouvelleCalédonie  Departement = 188
+
+	DepartementLen = 189
 )
 
 func (d Departement) String() string {

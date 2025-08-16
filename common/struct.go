@@ -16,6 +16,8 @@ type Event struct {
 
 	Option []Option
 
+	// True if a you can vote to multuple option.
+	// Example: Municipale élection in France where max 999 citizens live in the city.
 	SplitVoting bool
 }
 

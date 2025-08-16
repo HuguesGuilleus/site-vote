@@ -35,3 +35,26 @@
 6. % Voix/inscrits N
 7. % Voix/exprimés N
 8. Elu N
+
+# Liste des candidats
+
+Cela permet de trouver la bonne circonscription.
+
+0. Code département
+1. Département
+2. Code circonscription
+3. Libellé circonscription
+4. Numéro de panneau
+5. N° dépôt
+6. Sexe du candidat
+7. Nom du candidat
+8. Prénom du candidat
+9. Date de naissance du candidat
+10. Code nuance
+11. Profession
+12. Sortant
+13. Sexe remplaçant
+14. Nom remplaçant
+15. Prénom remplaçant
+16. Date de naissance remplaçant
+17. Sortant remplaçant

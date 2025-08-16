@@ -1,22 +1,28 @@
 package legislative2024
 
 import (
+	"strings"
+
 	"github.com/HuguesGuilleus/site-vote/common"
 	"github.com/HuguesGuilleus/site-vote/common/csvtool"
 	"github.com/HuguesGuilleus/sniffle/tool"
 )
 
+type districtByNames []map[string]string
+
 func Fetch(t *tool.Tool) []*common.Event {
-	// r := tool.FetchAll(t, fetch.URL(urlCirco))
-	// fmt.Println(string(r[:4096]))
-
-	csvtool.FetchCSV(t, urlCirco, headerCirco)
-
 	lines := csvtool.FetchCSV(t, url, header)
 	events := make([]*common.Event, len(lines))
 	for i, line := range lines {
 		events[i] = parseEvent(line)
 	}
+
+	districts := findDistrict(t)
+	for _, event := range events {
+		districtKey := strings.ToLower("1 " + event.Option[0].Name)
+		event.District = districts[event.Departement][districtKey]
+	}
+
 	return events
 }
 
@@ -36,6 +42,23 @@ func parseEvent(line []string) *common.Event {
 
 		Option: parseOption(line[19:], make([]common.Option, 0, 19)),
 	}
+}
+
+func findDistrict(t *tool.Tool) (districts districtByNames) {
+	districts = make(districtByNames, common.DepartementLen)
+	for d := range districts {
+		districts[d] = make(map[string]string)
+	}
+	for _, candidate := range csvtool.FetchCSV(t, urlCirco, headerCirco) {
+		d := common.DepartementCode2Const[candidate[0]]
+		districtKey := strings.ToLower("" +
+			candidate[4] + " " +
+			candidate[7] + " " +
+			candidate[8],
+		)
+		districts[d][districtKey] = strings.TrimLeft(strings.TrimPrefix(candidate[2], candidate[0]), "0")
+	}
+	return
 }
 
 func parseOption(line []string, options []common.Option) []common.Option {
