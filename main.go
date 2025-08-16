@@ -2,6 +2,7 @@ package main
 
 import (
 	_ "embed"
+	"flag"
 
 	"github.com/HuguesGuilleus/site-vote/common"
 	"github.com/HuguesGuilleus/site-vote/render"
@@ -25,7 +26,12 @@ var style []byte
 var favicon []byte
 
 func main() {
+	flagD := flag.String("d", "10", "Generate only for this departement code, or '*' for all")
 	t := tool.New(tool.CLI(nil))
+
+	skip := func(d common.Departement, _ string) bool {
+		return *flagD != "*" && d.Code() != *flagD
+	}
 
 	t.Info("fetch ...")
 	events := common.Call(t,
@@ -59,19 +65,5 @@ func main() {
 	}
 	for z := range common.ByStation(events, skip) {
 		render.RenderStation(t, z)
-	}
-}
-
-func skip(d common.Departement, city string) bool {
-	switch d {
-	case common.DepartementAube:
-	default:
-		return true
-	}
-	switch city {
-	case "", "La Chapelle-Saint-Luc", "Saint-Julien-les-Villas", "Sainte-Savine", "Troyes":
-		return false
-	default:
-		return true
 	}
 }
