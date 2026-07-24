@@ -26,6 +26,7 @@ func (e *Event) Check() {
 	}
 }
 
+// Define if a city has less 1000 register citizens.
 func SetSplitVoting(events []*Event) {
 	type Location struct {
 		Departement Departement

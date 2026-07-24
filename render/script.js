@@ -5,14 +5,14 @@ onkeydown = (e) =>
 		!e.metaKey &&
 		!e.ctrlKey &&
 		!e.altKey
-		? (checkExpressed.checked ^= true, e.preventDefault())
+		? (checkExpressed.checked ^= !e.preventDefault())
 		: 0;
 
 S = Array.from(
 	document.querySelectorAll("ul.sub>li"),
 	(i) => [i, i.innerText.toLowerCase()],
 );
-(search || {}).oninput = () => {
+(search || 0).oninput = () => {
 	V = search.value.toLowerCase();
 	S.map(([i, t]) => i.hidden = !t.includes(V));
 };

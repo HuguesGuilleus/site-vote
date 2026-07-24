@@ -9,11 +9,11 @@ import (
 
 var componentNav = render.Z
 var componentFooter = render.N("footer",
-	"Codé par Hugues à partir de donnée du ministère de l'intérieur.",
+	"Codé par Hugues et David à partir de donnée du ministère de l'intérieur.",
 	render.N("br"),
 	render.Na("a", "href", "https://www.data.gouv.fr/pages/donnees-des-elections/").N("[données]"),
 	" ",
-	render.Na("a", "href", "https://github.com/HuguesGuilleus/site-vote").N("[code]"),
+	render.Na("a", "href", "https://github.com/fitroyes/site-vote").N("[code]"),
 )
 
 func renderBar(sum *common.Summary) render.Node {

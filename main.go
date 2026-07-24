@@ -3,6 +3,8 @@ package main
 import (
 	_ "embed"
 	"flag"
+	"fmt"
+	"time"
 
 	"github.com/HuguesGuilleus/site-vote/common"
 	"github.com/HuguesGuilleus/site-vote/render"
@@ -12,6 +14,7 @@ import (
 	"github.com/HuguesGuilleus/site-vote/votation/legislative2024"
 	"github.com/HuguesGuilleus/site-vote/votation/municipale2014"
 	"github.com/HuguesGuilleus/site-vote/votation/municipale2020"
+	"github.com/HuguesGuilleus/site-vote/votation/municipale2026"
 	"github.com/HuguesGuilleus/site-vote/votation/presidentielle2012"
 	"github.com/HuguesGuilleus/site-vote/votation/presidentielle2017"
 	"github.com/HuguesGuilleus/site-vote/votation/presidentielle2022"
@@ -26,6 +29,10 @@ var style []byte
 var favicon []byte
 
 func main() {
+	defer func(begin time.Time) {
+		fmt.Println("duration:", time.Since(begin).Truncate(time.Millisecond))
+	}(time.Now())
+
 	flagD := flag.String("d", "10", "Generate only for this departement code, or '*' for all")
 	t := tool.New(tool.CLI(nil))
 
@@ -35,6 +42,7 @@ func main() {
 
 	t.Info("fetch ...")
 	events := common.Call(t,
+		municipale2026.Fetch,
 		municipale2020.Fetch,
 		municipale2014.Fetch,
 
