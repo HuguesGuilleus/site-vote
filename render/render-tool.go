@@ -9,7 +9,7 @@ import (
 
 var componentNav = render.Z
 var componentFooter = render.N("footer",
-	"Codé par Hugues et David à partir de donnée du ministère de l'intérieur.",
+	"Codé par Hugues et David à partir des données du ministère de l'intérieur.",
 	render.N("br"),
 	render.Na("a", "href", "https://www.data.gouv.fr/pages/donnees-des-elections/").N("[données]"),
 	" ",
